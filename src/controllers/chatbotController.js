@@ -1,33 +1,53 @@
-import Conversation from '../models/Conversation.js';
+import ChatbotService from '../services/ChatbotService.js';
 
-async function handleChatbotMessage(message) {
-  return `You said: ${message}`;
-}
-
-const conversationController = {
+const ChatbotController = {
   handleMessage: async (req, res) => {
     try {
-      const { message } = req.body;
-      const response = await handleChatbotMessage(message);
-      const conversation = new Conversation({
-        message,
-        response,
+      const chatbot = await ChatbotService.handleMessage({
+        message: req.body.message,
+        response: req.body.response
       });
-      await conversation.save();
-      res.json({ response });
+      res.status(201).json(chatbot);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(400).json({ message: error.message });
     }
   },
 
   getConversation: async (req, res) => {
     try {
-      const conversations = await Conversation.find();
-      res.json(conversations);
+      const chatbotMessages = await ChatbotService.getConversation();
+      res.json(chatbotMessages);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
   },
+
+  getConversationById: async (req, res) => {
+    try {
+      const chatbotMessage = await ChatbotService.getConversationById(req.params.id);
+      res.json(chatbotMessage);
+    } catch (error) {
+      res.status(404).json({ message: error.message });
+    }
+  },
+
+  updateConversation: async (req, res) => {
+    try {
+      const chatbotMessages = await ChatbotService.updateConversation();
+      res.json(chatbotMessages);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+
+  deleteConversation: async (req, res) => {
+    try {
+      const result = await ChatbotService.deleteConversation(req.params.id);
+      res.json(result);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
 };
 
-export default conversationController;
+export default ChatbotController;

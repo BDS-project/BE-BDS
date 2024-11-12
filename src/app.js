@@ -5,6 +5,8 @@ import cors from 'cors';
 import propertyRoutes from './routes/propertyRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import chatbotRoutes from './routes/chatbotRoutes.js';
+import appointmentRoutes from './routes/appointmentRoutes.js';
+import blogRoutes from './routes/blogRoutes.js';
 
 const app = express();
 
@@ -14,6 +16,7 @@ mongoose
   .connect(mongoUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useCreateIndex: true
   })
   .then(() => {
     console.log('Connected to MongoDB');
@@ -28,9 +31,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 // Routes
-app.use('/api/properties', propertyRoutes);
-app.use('/api/users', userRoutes);
+app.use('/api/property', propertyRoutes);
+app.use('/api/user', userRoutes);
 app.use('/api/chatbot', chatbotRoutes);
+app.use('/api/appointment', appointmentRoutes);
+app.use('/api/blog', blogRoutes);
 
 // Start server
 const PORT = process.env.PORT || 3000;

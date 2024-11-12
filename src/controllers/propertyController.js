@@ -1,47 +1,43 @@
-import Property from '../models/Property.js';
-import { StatusCodes, ReasonPhrases } from '../utils/httpStatusCode/httpStatusCode.js';
+import PropertyService from '../services/PropertyService.js';
 
-const propertyController = {
+const PropertyController = {
   getAllProperties: async (req, res) => {
     try {
-      const properties = await Property.find();
+      const properties = await PropertyService.getAllProperties();
       res.json(properties);
     } catch (error) {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: ReasonPhrases.INTERNAL_SERVER_ERROR });
+      res.status(500).json({ message: error.message });
     }
   },
 
   createProperty: async (req, res) => {
-    console.log('req.body:', req.body);
-
-    const property = new Property(req.body);
     try {
-      await property.save();
-      res.status(StatusCodes.CREATED).json(property);
+      const property = await PropertyService.createProperty({
+        title: req.body.title,
+        description: req.body.description,
+        price: req.body.price,
+        category: req.body.category,
+        location: req.body.location,
+        status: req.body.status
+      });
+      res.status(201).json(property);
     } catch (error) {
-      console.log('error:', error);
-      res.status(StatusCodes.BAD_REQUEST).json({ message: ReasonPhrases.BAD_REQUEST });
+      res.status(400).json({ message: error.message });
     }
   },
 
   getPropertyById: async (req, res) => {
     try {
-      const property = await Property.findById(req.params.id);
-      if (!property) {
-        return res.status(StatusCodes.NOT_FOUND).json({ message: ReasonPhrases.NOT_FOUND });
-      }
+      const property = await PropertyService.getPropertyById(req.params.id);
       res.json(property);
     } catch (error) {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: ReasonPhrases.INTERNAL_SERVER_ERROR });
+      res.status(404).json({ message: error.message });
     }
   },
 
   updateProperty: async (req, res) => {
     try {
-      const property = await Property.findByIdAndUpdate(req.params.id, req.body, { new: true });
-      if (!property) {
-        return res.status(404).json({ message: 'Property not found' });
-      }
+      const property = await PropertyService.updateProperty(req.params.id, req.body);
       res.json(property);
     } catch (error) {
       res.status(400).json({ message: error.message });
@@ -50,15 +46,12 @@ const propertyController = {
 
   deleteProperty: async (req, res) => {
     try {
-      const property = await Property.findByIdAndDelete(req.params.id);
-      if (!property) {
-        return res.status(404).json({ message: 'Property not found' });
-      }
-      res.json({ message: 'Property deleted' });
+      const result = await PropertyService.deleteProperty(req.params.id);
+      res.json(result);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(400).json({ message: error.message });
     }
-  },
+  }
 };
 
-export default propertyController;
+export default PropertyController;
