@@ -8,6 +8,7 @@ import chatbotRoutes from './routes/chatbotRoutes.js';
 import appointmentRoutes from './routes/appointmentRoutes.js';
 import blogRoutes from './routes/blogRoutes.js';
 import { typeDefs, resolvers } from './graphql/index.js';
+import authenticate from './utils/middleware/auth.js';
 
 // Khởi tạo ứng dụng
 const app = express();
@@ -28,22 +29,25 @@ app.use('/api/blog', blogRoutes);
 // Khởi tạo server
 const startServer = async () => {
   try {
-    // Kết nối MongoDB
     await connectDB();
-    console.log('Kết nối MongoDB thành công');
 
-    // Thiết lập Apollo Server
-    const server = new ApolloServer({ typeDefs, resolvers });
+    const server = new ApolloServer({
+      typeDefs,
+      resolvers,
+      context: ({ req }) => {
+        const user = authenticate(req);
+        return { user };
+      }
+    });
     await server.start();
     server.applyMiddleware({ app });
 
-    // Lắng nghe yêu cầu
     app.listen(PORT, () => {
-      console.log(`Server đang chạy tại http://localhost:${PORT}`);
-      console.log(`GraphQL đang chạy tại http://localhost:${PORT}${server.graphqlPath}`);
+      console.log(`Server http://localhost:${PORT}`);
+      console.log(`GraphQL http://localhost:${PORT}${server.graphqlPath}`);
     });
   } catch (error) {
-    console.error('Lỗi khi khởi tạo server:', error);
+    console.error('error:', error);
     process.exit(1);
   }
 };
