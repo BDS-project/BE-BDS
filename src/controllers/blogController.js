@@ -1,4 +1,5 @@
 import BlogService from '../services/BlogService.js';
+import { StatusCodes, ReasonPhrases } from '../utils/httpStatusCode/httpStatusCode.js';
 
 const BlogController = {
   createBlog: async (req, res) => {
@@ -9,9 +10,9 @@ const BlogController = {
         author: req.user._id,
         category: req.body.categoryId
       });
-      res.status(201).json(blog);
+      res.status(StatusCodes.CREATED).json(blog);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ReasonPhrases.BAD_REQUEST });
     }
   },
 
@@ -20,7 +21,7 @@ const BlogController = {
       const blogs = await BlogService.getAllBlogs();
       res.json(blogs);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: ReasonPhrases.INTERNAL_SERVER_ERROR });
     }
   },
 
@@ -29,7 +30,7 @@ const BlogController = {
       const blog = await BlogService.getBlogById(req.params.id);
       res.json(blog);
     } catch (error) {
-      res.status(404).json({ message: error.message });
+      res.status(StatusCodes.NOT_FOUND).json({ message: ReasonPhrases.NOT_FOUND });
     }
   },
 
@@ -38,7 +39,7 @@ const BlogController = {
       const blog = await BlogService.updateBlog(req.params.id, req.body);
       res.json(blog);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ReasonPhrases.BAD_REQUEST });
     }
   },
 
@@ -47,7 +48,7 @@ const BlogController = {
       const result = await BlogService.deleteBlog(req.params.id);
       res.json(result);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ReasonPhrases.BAD_REQUEST });
     }
   }
 };

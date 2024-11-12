@@ -1,4 +1,5 @@
 import AppointmentService from '../services/AppointmentService.js';
+import { StatusCodes, ReasonPhrases } from '../utils/httpStatusCode/httpStatusCode.js';
 
 const AppointmentController = {
   createAppointment: async (req, res) => {
@@ -9,9 +10,9 @@ const AppointmentController = {
         dateTime: req.body.dateTime,
         status: 'pending'
       });
-      res.status(201).json(appointment);
+      res.status(StatusCodes.CREATED).json(appointment);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ReasonPhrases.BAD_REQUEST });
     }
   },
 
@@ -20,7 +21,7 @@ const AppointmentController = {
       const appointments = await AppointmentService.getAllAppointments(req.user._id);
       res.json(appointments);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: ReasonPhrases.INTERNAL_SERVER_ERROR });
     }
   },
 
@@ -29,7 +30,7 @@ const AppointmentController = {
       const appointment = await AppointmentService.getAppointmentById(req.params.id);
       res.json(appointment);
     } catch (error) {
-      res.status(404).json({ message: error.message });
+      res.status(StatusCodes.NOT_FOUND).json({ message: ReasonPhrases.NOT_FOUND });
     }
   },
 
@@ -38,7 +39,7 @@ const AppointmentController = {
       const appointment = await AppointmentService.updateAppointment(req.params.id, req.body);
       res.json(appointment);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ReasonPhrases.BAD_REQUEST });
     }
   },
 
@@ -47,7 +48,7 @@ const AppointmentController = {
       const result = await AppointmentService.deleteAppointment(req.params.id);
       res.json(result);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ReasonPhrases.BAD_REQUEST });
     }
   }
 };

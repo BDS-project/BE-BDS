@@ -1,4 +1,5 @@
 import PropertyService from '../services/PropertyService.js';
+import { StatusCodes, ReasonPhrases } from '../utils/httpStatusCode/httpStatusCode.js';
 
 const PropertyController = {
   getAllProperties: async (req, res) => {
@@ -6,7 +7,7 @@ const PropertyController = {
       const properties = await PropertyService.getAllProperties();
       res.json(properties);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
   },
 
@@ -20,9 +21,9 @@ const PropertyController = {
         location: req.body.location,
         status: req.body.status
       });
-      res.status(201).json(property);
+      res.status(StatusCodes.CREATED).json(property);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ReasonPhrases.BAD_REQUEST });
     }
   },
 
@@ -31,7 +32,7 @@ const PropertyController = {
       const property = await PropertyService.getPropertyById(req.params.id);
       res.json(property);
     } catch (error) {
-      res.status(404).json({ message: error.message });
+      res.status(StatusCodes.NOT_FOUND).json({ message: ReasonPhrases.NOT_FOUND });
     }
   },
 
@@ -40,7 +41,7 @@ const PropertyController = {
       const property = await PropertyService.updateProperty(req.params.id, req.body);
       res.json(property);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ReasonPhrases.BAD_REQUEST });
     }
   },
 
@@ -49,7 +50,7 @@ const PropertyController = {
       const result = await PropertyService.deleteProperty(req.params.id);
       res.json(result);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ReasonPhrases.BAD_REQUEST });
     }
   }
 };

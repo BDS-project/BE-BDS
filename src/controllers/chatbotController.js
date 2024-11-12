@@ -1,4 +1,5 @@
 import ChatbotService from '../services/ChatbotService.js';
+import { StatusCodes, ReasonPhrases } from '../utils/httpStatusCode/httpStatusCode.js';
 
 const ChatbotController = {
   handleMessage: async (req, res) => {
@@ -7,9 +8,9 @@ const ChatbotController = {
         message: req.body.message,
         response: req.body.response
       });
-      res.status(201).json(chatbot);
+      res.status(StatusCodes.CREATED).json(chatbot);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ReasonPhrases.BAD_REQUEST });
     }
   },
 
@@ -18,7 +19,7 @@ const ChatbotController = {
       const chatbotMessages = await ChatbotService.getConversation();
       res.json(chatbotMessages);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: ReasonPhrases.INTERNAL_SERVER_ERROR });
     }
   },
 
@@ -27,7 +28,7 @@ const ChatbotController = {
       const chatbotMessage = await ChatbotService.getConversationById(req.params.id);
       res.json(chatbotMessage);
     } catch (error) {
-      res.status(404).json({ message: error.message });
+      res.status(StatusCodes.NOT_FOUND).json({ message: ReasonPhrases.NOT_FOUND });
     }
   },
 
@@ -36,7 +37,7 @@ const ChatbotController = {
       const chatbotMessages = await ChatbotService.updateConversation();
       res.json(chatbotMessages);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: ReasonPhrases.INTERNAL_SERVER_ERROR });
     }
   },
 
@@ -45,7 +46,7 @@ const ChatbotController = {
       const result = await ChatbotService.deleteConversation(req.params.id);
       res.json(result);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ReasonPhrases.BAD_REQUEST });
     }
   }
 };

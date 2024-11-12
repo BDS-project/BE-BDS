@@ -1,4 +1,4 @@
-module.exports = {
+const ReasonPhrases = {
   ACCEPTED: 'Accepted',
   BAD_GATEWAY: 'Bad Gateway',
   BAD_REQUEST: 'Bad Request',
@@ -56,3 +56,4 @@ module.exports = {
   USE_PROXY: 'Use Proxy',
   MISDIRECTED_REQUEST: 'Misdirected Request'
 };
+export default ReasonPhrases;

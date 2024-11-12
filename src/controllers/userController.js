@@ -1,4 +1,5 @@
 import UserService from '../services/UserService.js';
+import { StatusCodes, ReasonPhrases } from '../utils/httpStatusCode/httpStatusCode.js';
 
 const UserController = {
   getAllUsers: async (req, res) => {
@@ -6,25 +7,25 @@ const UserController = {
       const users = await UserService.getAllUsers();
       res.json(users);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: ReasonPhrases.INTERNAL_SERVER_ERROR });
     }
   },
 
   createUser: async (req, res) => {
     try {
       const user = await UserService.createUser(req.body);
-      res.status(201).json(user);
+      res.status(StatusCodes.CREATED).json(user);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ReasonPhrases.BAD_REQUEST });
     }
   },
 
   registerUser: async (req, res) => {
     try {
       const { token } = await UserService.registerUser(req.body);
-      res.status(201).json({ token });
+      res.status(StatusCodes.CREATED).json({ token });
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ReasonPhrases.BAD_REQUEST });
     }
   },
 
@@ -33,7 +34,7 @@ const UserController = {
       const { token } = await UserService.loginUser(req.body);
       res.json({ token });
     } catch (error) {
-      res.status(401).json({ message: error.message });
+      res.status(StatusCodes.UNAUTHORIZED).json({ message: ReasonPhrases.UNAUTHORIZED });
     }
   },
 
@@ -42,7 +43,7 @@ const UserController = {
       const user = await UserService.getUserById(req.params.id);
       res.json(user);
     } catch (error) {
-      res.status(404).json({ message: error.message });
+      res.status(StatusCodes.NOT_FOUND).json({ message: ReasonPhrases.NOT_FOUND });
     }
   },
 
@@ -51,7 +52,7 @@ const UserController = {
       const user = await UserService.getProfile(req.user._id, req.body);
       res.json(user);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ReasonPhrases.BAD_REQUEST });
     }
   },
 
@@ -60,7 +61,7 @@ const UserController = {
       const user = await UserService.updateUser(req.params.id, req.body);
       res.json(user);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ReasonPhrases.BAD_REQUEST });
     }
   },
 
@@ -69,7 +70,7 @@ const UserController = {
       const result = await UserService.deleteUser(req.params.id);
       res.json(result);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ReasonPhrases.BAD_REQUEST });
     }
   }
 };
