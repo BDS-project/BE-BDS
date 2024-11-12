@@ -3,10 +3,13 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
 const UserService = {
-  getAllUsers: async () => {
+  getAllUsers: async (user) => {
     try {
-      const users = await User.find();
-      return users;
+      if (user.role === 'admin') {
+        const users = await User.find();
+        return users;
+      }
+      throw new Error('Unauthorized');
     } catch (error) {
       throw new Error(error.message);
     }
@@ -38,8 +41,9 @@ const UserService = {
         role
       });
       await user.save();
-      const token = jwt.sign({ userId: user._id }, 'secret_key', { expiresIn: '1h' });
-      return { token };
+      const accessToken = jwt.sign({ userId: user._id }, 'secret_key', { expiresIn: '1h' });
+      const refreshToken = jwt.sign({ userId: user._id }, 'secret_refresh_key', { expiresIn: '7d' });
+      return { accessToken, refreshToken };
     } catch (error) {
       throw new Error(error.message);
     }
@@ -56,20 +60,38 @@ const UserService = {
       if (!isPasswordValid) {
         throw new Error('Invalid email or password');
       }
-      const token = jwt.sign({ userId: user._id }, 'secret_key', { expiresIn: '1h' });
-      return { token };
+      const accessToken = jwt.sign({ userId: user._id }, 'secret_key', { expiresIn: '1h' });
+      const refreshToken = jwt.sign({ userId: user._id }, 'secret_refresh_key', { expiresIn: '7d' });
+      return { accessToken, refreshToken };
     } catch (error) {
       throw new Error(error.message);
     }
   },
 
-  getUserById: async (userId) => {
+  refreshToken: async (user, token) => {
     try {
-      const user = await User.findById(userId);
-      if (!user) {
-        throw new Error('User not found');
+      const decoded = jwt.verify(token, 'secret_refresh_key');
+      if (decoded.userId !== user._id.toString()) {
+        throw new Error('Invalid token');
       }
-      return user;
+      const accessToken = jwt.sign({ userId: user._id }, 'secret_key', { expiresIn: '1h' });
+      const refreshToken = jwt.sign({ userId: user._id }, 'secret_refresh_key', { expiresIn: '7d' });
+      return { accessToken, refreshToken };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
+
+  getUserById: async (userId, currentUser) => {
+    try {
+      if (currentUser.role === 'admin' || currentUser._id.toString() === userId) {
+        const user = await User.findById(userId);
+        if (!user) {
+          throw new Error('User not found');
+        }
+        return user;
+      }
+      throw new Error('Unauthorized');
     } catch (error) {
       throw new Error(error.message);
     }
@@ -85,25 +107,31 @@ const UserService = {
     }
   },
 
-  updateUser: async (userId, userData) => {
+  updateUser: async (userId, userData, currentUser) => {
     try {
-      const user = await User.findByIdAndUpdate(userId, userData, { new: true });
-      if (!user) {
-        throw new Error('User not found');
+      if (currentUser.role === 'admin' || currentUser._id.toString() === userId) {
+        const user = await User.findByIdAndUpdate(userId, userData, { new: true });
+        if (!user) {
+          throw new Error('User not found');
+        }
+        return user;
       }
-      return user;
+      throw new Error('Unauthorized');
     } catch (error) {
       throw new Error(error.message);
     }
   },
 
-  deleteUser: async (userId) => {
+  deleteUser: async (userId, currentUser) => {
     try {
-      const user = await User.findByIdAndDelete(userId);
-      if (!user) {
-        throw new Error('User not found');
+      if (currentUser.role === 'admin' || currentUser._id.toString() === userId) {
+        const user = await User.findByIdAndDelete(userId);
+        if (!user) {
+          throw new Error('User not found');
+        }
+        return { message: 'User deleted' };
       }
-      return { message: 'User deleted' };
+      throw new Error('Unauthorized');
     } catch (error) {
       throw new Error(error.message);
     }

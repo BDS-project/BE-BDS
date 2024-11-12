@@ -1,14 +1,28 @@
 import jwt from 'jsonwebtoken';
 import User from '../../models/User.js';
+import { StatusCodes } from '../httpStatusCode/httpStatusCode.js';
 
 const authenticate = async (req, res, next) => {
   try {
-    const token = req.headers.authorization.split(' ')[1];
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'No token provided' });
+    }
+
+    const [, token] = authHeader.split(' ');
     const decoded = jwt.verify(token, 'secret_key');
-    req.user = await User.findById(decoded.userId);
+    const user = await User.findById(decoded.userId);
+
+    if (!user) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Invalid token' });
+    }
+
+    req.user = user;
+    req.token = token;
     next();
   } catch (error) {
-    return res.status(401).json({ message: 'Invalid token' });
+    return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Invalid token' });
   }
 };
+
 export default authenticate;
