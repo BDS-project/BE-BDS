@@ -27,7 +27,7 @@ const UserService = {
 
   registerUser: async (userData) => {
     try {
-      const { firstName, lastName, email, password, role } = userData;
+      const { firstName, lastName, email, password } = userData;
       const existingUser = await User.findOne({ email });
       if (existingUser) {
         throw new Error('Email already exists');
@@ -37,8 +37,7 @@ const UserService = {
         firstName,
         lastName,
         email,
-        password: hashedPassword,
-        role
+        password: hashedPassword
       });
       await user.save();
       const accessToken = jwt.sign({ userId: user._id }, 'secret_key', { expiresIn: '1h' });

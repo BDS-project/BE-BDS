@@ -1,4 +1,13 @@
-import typeDefs from './typeDefs.js';
-import resolvers from './resolvers.js';
+import userSchema from './user/user.schema.js';
+import userResolvers from './user/user.resolvers.js';
+import appointmentSchema from './appointment/appointment.schema.js';
+import appointmentResolvers from './appointment/appointment.resolvers.js';
+import propertySchema from './property/property.schema.js';
+import chatbotSchema from './chatbot/chatbot.schema.js';
+import blogSchema from './blog/blog.schema.js';
+import propertyResolvers from './property/property.resolvers.js';
+import chatbotResolvers from './chatbot/chatbot.resolvers.js';
+import blogResolvers from './blog/blog.resolvers.js';
 
-export { typeDefs, resolvers };
+export const typeDefs = [userSchema, appointmentSchema, propertySchema, chatbotSchema, blogSchema];
+export const resolvers = [userResolvers, appointmentResolvers, propertyResolvers, chatbotResolvers, blogResolvers];

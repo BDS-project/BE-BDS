@@ -34,8 +34,8 @@ const startServer = async () => {
     const server = new ApolloServer({
       typeDefs,
       resolvers,
-      context: ({ req }) => {
-        const user = authenticate(req);
+      context: async ({ req }) => {
+        const user = await authenticate(req);
         return { user };
       }
     });
