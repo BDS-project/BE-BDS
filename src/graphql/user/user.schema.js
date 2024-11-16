@@ -1,13 +1,13 @@
 export default `
   type User {
     id: ID!
-    firstName: String!
-    lastName: String!
+    first_name: String!
+    last_name: String!
     email: String!
     role: String!
-    isActive: Boolean! 
-    createdAt: String
-    updatedAt: String
+    status: String! 
+    created_at: String
+    updated_at: String
   }
 
   type AuthResponse {
@@ -22,11 +22,11 @@ export default `
   }
 
   type Mutation {
-    register(firstName: String!, lastName: String!, email: String!, password: String!, role: String!): AuthResponse
+    register(first_name: String!, last_name: String!, email: String!, password: String!): AuthResponse
     login(email: String!, password: String!): AuthResponse
     refreshToken: AuthResponse
-    createUser(firstName: String!, lastName: String!, email: String!, password: String!, role: String!): User
-    updateUser(id: ID!, firstName: String, lastName: String, email: String, isActive: Boolean): User
+    createUser(first_name: String!, last_name: String!, email: String!, password: String!, role: String!): User
+    updateUser(id: ID!, first_name: String, last_name: String, email: String, isActive: Boolean): User
     deleteUser(id: ID!): String
   }
 `;

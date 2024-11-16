@@ -1,10 +1,22 @@
+import User from '../../models/User.js';
 import UserService from '../../services/UserService.js';
 
 const resolvers = {
   Query: {
-    users: async (_, __, { user }) => {
+    users: async (_parent, _args, user, _info) => {
       if (!user) throw new Error('Unauthorized');
-      return await UserService.getAllUsers(user);
+      if (user.role === 'admin') {
+        return await User.find({}, {
+          _id: 1,
+          first_name: 1,
+          last_name: 1,
+          email: 1,
+          role: 1,
+          status: 1,
+          created_at: 1,
+          updated_at: 1
+        });
+      }
     },
     profile: async (_, __, { user }) => {
       if (!user) throw new Error('Unauthorized');

@@ -1,16 +1,22 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 import User from '../models/User.js';
+
+dotenv.config();
 
 const UserService = {
   getAllUsers: async (user) => {
+    console.log('user2:', user);
     try {
       if (user.role === 'admin') {
         const users = await User.find();
+        console.log('users:', users);
         return users;
       }
       throw new Error('Unauthorized');
     } catch (error) {
+      console.log('error:', error);
       throw new Error(error.message);
     }
   },
@@ -28,20 +34,22 @@ const UserService = {
   registerUser: async (userData) => {
     try {
       const { firstName, lastName, email, password } = userData;
+
       const existingUser = await User.findOne({ email });
       if (existingUser) {
         throw new Error('Email already exists');
       }
       const hashedPassword = await bcrypt.hash(password, 10);
       const user = new User({
-        firstName,
-        lastName,
+        first_name: firstName,
+        last_name: lastName,
         email,
         password: hashedPassword
       });
       await user.save();
-      const accessToken = jwt.sign({ userId: user._id }, 'secret_key', { expiresIn: '1h' });
-      const refreshToken = jwt.sign({ userId: user._id }, 'secret_refresh_key', { expiresIn: '7d' });
+      const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const refreshToken = jwt.sign({ userId: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
+
       return { accessToken, refreshToken };
     } catch (error) {
       throw new Error(error.message);
@@ -59,8 +67,8 @@ const UserService = {
       if (!isPasswordValid) {
         throw new Error('Invalid email or password');
       }
-      const accessToken = jwt.sign({ userId: user._id }, 'secret_key', { expiresIn: '1h' });
-      const refreshToken = jwt.sign({ userId: user._id }, 'secret_refresh_key', { expiresIn: '7d' });
+      const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const refreshToken = jwt.sign({ userId: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
       return { accessToken, refreshToken };
     } catch (error) {
       throw new Error(error.message);
@@ -69,12 +77,12 @@ const UserService = {
 
   refreshToken: async (user, token) => {
     try {
-      const decoded = jwt.verify(token, 'secret_refresh_key');
+      const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
       if (decoded.userId !== user._id.toString()) {
         throw new Error('Invalid token');
       }
-      const accessToken = jwt.sign({ userId: user._id }, 'secret_key', { expiresIn: '1h' });
-      const refreshToken = jwt.sign({ userId: user._id }, 'secret_refresh_key', { expiresIn: '7d' });
+      const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const refreshToken = jwt.sign({ userId: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
       return { accessToken, refreshToken };
     } catch (error) {
       throw new Error(error.message);
