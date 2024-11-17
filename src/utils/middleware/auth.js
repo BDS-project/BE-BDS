@@ -12,14 +12,11 @@ const authenticate = async (req) => {
   }
 
   const token = authHeader.split(' ')[1];
-  console.log('token:', token);
 
   if (!token) throw new Error('Authorization header missing');
 
   try {
-    console.log('process.env.JWT_SECRET:', process.env.JWT_SECRET);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('decoded:', decoded);
     const user = await User.findById(decoded.userId);
 
     if (!user) throw new Error('User not found');

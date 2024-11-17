@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const connectDB = async () => {
   try {
-    await mongoose.connect('mongodb+srv://admin:admin123456@property.hqsu1.mongodb.net/?retryWrites=true&w=majority&appName=property', {
+    await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });

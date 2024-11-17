@@ -3,13 +3,17 @@ export default `
     id: ID!
     message: String!
     response: String!
-    createdAt: String
-    updatedAt: String
+    session_id: String!
+    created_at: String
+    updated_at: String
   }
 
   type Query {
-    chatbotMessages: [ChatbotMessage!]!
-    chatbotMessage(id: ID!): ChatbotMessage
+    chatWithBot(message: String!, session_id: String!): ChatbotResponse
+  }  
+  type ChatbotResponse {
+    response: String
+    intent: String
   }
 
   type Mutation {

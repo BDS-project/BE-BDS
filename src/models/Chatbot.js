@@ -6,6 +6,7 @@ const chatbotSchema = new mongoose.Schema({
   response: { type: String, required: true },
   context: { type: String, required: false },
   intent: { type: String, required: false },
+  session_id: { type: String, required: true },
   is_auto_response: { type: Boolean, default: true },
   feedback: { type: String, enum: ['like', 'dislike'], required: false },
   created_at: { type: Date, default: Date.now },

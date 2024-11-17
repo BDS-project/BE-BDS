@@ -7,8 +7,8 @@ export default `
     category: String!
     location: String!
     status: String!
-    createdAt: String
-    updatedAt: String
+    created_at: String
+    updated_at: String
   }
 
   type Query {
