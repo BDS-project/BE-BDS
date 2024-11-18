@@ -3,11 +3,6 @@ import cors from 'cors';
 import { ApolloServer } from 'apollo-server-express';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
-// import propertyRoutes from './routes/propertyRoutes.js';
-// import userRoutes from './routes/userRoutes.js';
-// import chatbotRoutes from './routes/chatbotRoutes.js';
-// import appointmentRoutes from './routes/appointmentRoutes.js';
-// import blogRoutes from './routes/blogRoutes.js';
 import { typeDefs, resolvers } from './graphql/index.js';
 import authenticate from './utils/middleware/auth.js';
 
@@ -16,17 +11,9 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-
-// Thiết lập các route
-// app.use('/api/property', propertyRoutes);
-// app.use('/api/user', userRoutes);
-// app.use('/api/chatbot', chatbotRoutes);
-// app.use('/api/appointment', appointmentRoutes);
-// app.use('/api/blog', blogRoutes);
 
 const startServer = async () => {
   try {
