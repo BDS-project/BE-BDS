@@ -1,32 +1,23 @@
 export default `
-type Furniture {
-  id: ID!
-  name: String!
-  icon: String
-  category: String
-  created_at: String
-  updated_at: String
-}
+ scalar Upload
 
-type Query {
-  furnitures: [Furniture!]!
-  furniture(id: ID!): Furniture
-}
-
-type Mutation {
-  createFurniture(
-    name: String!,
-    icon: String,
+  type Furniture {
+    id: ID!
+    name: String!
+    icon: String
     category: String
-  ): Furniture
+    created_at: String
+    updated_at: String
+  }
 
-  updateFurniture(
-    id: ID!,
-    name: String,
-    icon: String,
-    category: String
-  ): Furniture
+  type Query {
+    furnitures: [Furniture!]!
+    furniture(id: ID!): Furniture
+  }
 
-  deleteFurniture(id: ID!): String
-}
+  type Mutation {
+    createFurniture(name: String!, icon: Upload!, category: String!): Furniture
+    updateFurniture(id: ID!, name: String, icon: Upload, category: String): Furniture
+    deleteFurniture(id: ID!): String
+  }
 `;

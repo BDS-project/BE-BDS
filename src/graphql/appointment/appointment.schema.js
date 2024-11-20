@@ -5,6 +5,8 @@ export default `
     property: Property!
     dateTime: String!
     status: String!
+    created_at: String
+    updated_at: String
   }
 
   type Query {

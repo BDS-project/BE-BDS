@@ -16,9 +16,7 @@ const PropertySchema = new mongoose.Schema({
     district: { type: String }
   },
   project: { type: mongoose.Schema.Types.ObjectId, ref: 'Project', required: true },
-  furniture: { type: mongoose.Schema.Types.ObjectId, ref: 'Furniture', required: true },
-  created_at: { type: Date, default: Date.now },
-  updated_at: { type: Date, default: Date.now }
-});
+  furniture: { type: mongoose.Schema.Types.ObjectId, ref: 'Furniture', required: true }
+}, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 export default mongoose.model('Property', PropertySchema);

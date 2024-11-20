@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { ApolloServer } from 'apollo-server-express';
 import dotenv from 'dotenv';
+import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 import connectDB from './config/db.js';
 import { typeDefs, resolvers } from './graphql/index.js';
 import authenticate from './utils/middleware/auth.js';
@@ -14,6 +15,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(graphqlUploadExpress());
 
 const startServer = async () => {
   try {

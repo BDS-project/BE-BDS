@@ -12,8 +12,6 @@ type Property {
   price: Float!
   location: Location!
   project: Project!
-  created_at: String
-  updated_at: String
 }
 
 type Location {

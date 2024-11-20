@@ -1,28 +1,63 @@
-import PropertyService from '../../services/PropertyService.js';
+import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
+import FurnitureService from '../../services/FurnitureService.js';
+import uploadFileToGCS from '../../utils/middleware/uploadFile.js';
 
 const resolvers = {
+  Upload: GraphQLUpload,
+
   Query: {
-    properties: async (_, __, { user }) => {
-      if (!user) throw new Error('Unauthorized');
-      return await PropertyService.getAllProperties(user._id);
-    },
-    property: async (_, { id }, { user }) => {
-      if (!user) throw new Error('Unauthorized');
-      return await PropertyService.getPropertyById(id);
-    }
+    furnitures: async () => await FurnitureService.getAllFurnitures(),
+    furniture: async (_, { id }) => await FurnitureService.getFurnitureById(id)
   },
   Mutation: {
-    createProperty: async (_, { title, description, price, category, location, status }, { user }) => {
+    createFurniture: async (_parent, { name, icon, category }, user, _info) => {
+      console.log('category:', category);
+      console.log('icon:', icon);
+      console.log('name:', name);
+      console.log('user:', user);
+
       if (!user) throw new Error('Unauthorized');
-      return await PropertyService.createProperty({ title, description, price, category, location, status });
+      if (user.role === 'admin') {
+        let iconUrl = null;
+
+        if (icon) {
+          const { createReadStream, filename } = await icon;
+          const fileUrl = await uploadFileToGCS({ createReadStream, filename });
+          iconUrl = fileUrl;
+        }
+
+        return await FurnitureService.createFurniture({
+          name,
+          icon: iconUrl,
+          category
+        });
+      }
+      throw new Error('You must be an admin to create furniture');
     },
-    updateProperty: async (_, { id, ...args }, { user }) => {
+
+    updateFurniture: async (_parent, { id, input }, user, _info) => {
       if (!user) throw new Error('Unauthorized');
-      return await PropertyService.updateProperty(id, args);
+      if (user.role === 'admin') {
+        let iconUrl = null;
+
+        if (input.icon) {
+          const { createReadStream, filename } = await input.icon;
+          const fileUrl = await uploadFileToGCS({ createReadStream, filename });
+          iconUrl = fileUrl;
+        }
+
+        return await FurnitureService.updateFurniture(id, {
+          ...input,
+          icon: iconUrl
+        });
+      }
+      throw new Error('You must be an admin to update furniture');
     },
-    deleteProperty: async (_, { id }, { user }) => {
+    deleteFurniture: async (_parent, _args, user, _info) => {
       if (!user) throw new Error('Unauthorized');
-      return await PropertyService.deleteProperty(id);
+      if (user.role === 'admin') {
+        return await FurnitureService.deleteFurniture(_args.id);
+      }
     }
   }
 };

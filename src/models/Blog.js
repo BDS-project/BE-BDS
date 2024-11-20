@@ -11,13 +11,11 @@ const blogSchema = new mongoose.Schema({
   views: { type: Number, default: 0 },
   likes: { type: Number, default: 0 },
   thumbnail: { type: String, required: false },
-  created_at: { type: Date, default: Date.now },
-  updated_at: { type: Date, default: Date.now },
   comments: [{
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     comment: { type: String, required: true },
     created_at: { type: Date, default: Date.now }
   }]
-});
+}, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 export default mongoose.model('Blog', blogSchema);

@@ -67,7 +67,7 @@ const UserService = {
       if (!isPasswordValid) {
         throw new Error('Invalid email or password');
       }
-      const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '5h' });
       const refreshToken = jwt.sign({ userId: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
       return { accessToken, refreshToken };
     } catch (error) {

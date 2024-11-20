@@ -8,25 +8,23 @@ const resolvers = {
 
   Mutation: {
     createProject: async (_parent, _args, user, _info) => {
-      console.log('user:', user);
-      console.log('_args:', _args);
       if (!user) throw new Error('Unauthorized');
       if (user.role === 'admin') {
         return await ProjectService.createProject(_args.input);
       }
     },
 
-    updateProject: async (_, { id, ...args }, { user }) => {
+    updateProject: async (_parent, _args, user, _info) => {
       if (!user) throw new Error('Unauthorized');
       if (user.role === 'admin') {
-        return await ProjectService.updateProject(id, args);
+        return await ProjectService.updateProject(_args.id, _args.input);
       }
     },
 
-    deleteProject: async (_, { id }, { user }) => {
+    deleteProject: async (_parent, _args, user, _info) => {
       if (!user) throw new Error('Unauthorized');
       if (user.role === 'admin') {
-        return await ProjectService.deleteProject(id);
+        return await ProjectService.deleteProject(_args.id);
       }
     }
   }

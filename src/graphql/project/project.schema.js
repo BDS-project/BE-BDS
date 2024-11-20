@@ -5,8 +5,11 @@ type Project {
   location_advantages: [String!]
   project_information: [String!]
   address: String!
+  province: String!
+  district: String!
+  ward: String!
   total_floors: Int!
-  total_area: Float! # Tổng diện tích dự án (m²)
+  total_area: Float!
   blocks: [Block!]
   total_blocks: Int!
   total_apartments: Int!
@@ -22,6 +25,9 @@ input CreateProjectInput {
   location_advantages: [String]
   project_information: [String]
   address: String!
+  province: String!
+  district: String!
+  ward: String!
   total_floors: Int!
   total_area: Float!
   blocks: [BlockInput]
@@ -31,6 +37,25 @@ input CreateProjectInput {
   launch_year: Int
   status: String
 }
+
+input UpdateProjectInput {
+  name: String
+  location_advantages: [String]
+  project_information: [String]
+  address: String
+  province: String
+  district: String
+  ward: String
+  total_floors: Int
+  total_area: Float
+  blocks: [BlockInput]
+  total_blocks: Int
+  total_apartments: Int
+  developer: String
+  launch_year: Int
+  status: String
+}
+
 
 type Block {
   name: String
@@ -45,21 +70,7 @@ type Query {
 type Mutation {
   createProject(input: CreateProjectInput!): Project
 
-  updateProject(
-    id: ID!,
-    name: String,
-    location_advantages: [String!],
-    project_information: [String!],
-    address: String,
-    total_floors: Int,
-    total_area: Float,
-    blocks: [BlockInput!],
-    total_blocks: Int,
-    total_apartments: Int,
-    developer: String,
-    launch_year: Int,
-    status: String
-  ): Project
+  updateProject(id: ID!, input: UpdateProjectInput!): Project
 
   deleteProject(id: ID!): String
 }

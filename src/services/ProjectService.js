@@ -1,7 +1,6 @@
 import Project from '../models/Project.js';
 
 const ProjectService = {
-  // Lấy danh sách tất cả Project
   getAllProjects: async () => {
     try {
       const projects = await Project.find();
@@ -11,7 +10,6 @@ const ProjectService = {
     }
   },
 
-  // Tạo mới một Project
   createProject: async (projectData) => {
     try {
       const project = new Project(projectData);
@@ -25,7 +23,6 @@ const ProjectService = {
     }
   },
 
-  // Lấy thông tin chi tiết của một Project theo ID
   getProjectById: async (projectId) => {
     try {
       const project = await Project.findById(projectId);
@@ -38,7 +35,6 @@ const ProjectService = {
     }
   },
 
-  // Cập nhật thông tin của một Project theo ID
   updateProject: async (projectId, projectData) => {
     try {
       const project = await Project.findByIdAndUpdate(projectId, projectData, { new: true });
@@ -51,7 +47,6 @@ const ProjectService = {
     }
   },
 
-  // Xóa một Project theo ID
   deleteProject: async (projectId) => {
     try {
       const project = await Project.findByIdAndDelete(projectId);
