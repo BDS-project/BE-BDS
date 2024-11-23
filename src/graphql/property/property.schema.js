@@ -5,6 +5,7 @@ type Property {
   id: ID!
   type: String! 
   title: String!
+  name: String!
   description: String!
   bedrooms: Int!
   bathrooms: Int!
@@ -14,9 +15,10 @@ type Property {
   price: Float!
   location: Location!
   project: Project!
+  internal_facilities: [String]
   furnitures: [String]
   status: String
-  propertyimages: [PropertyImage!]!
+  property_images: [PropertyImage!]!
   is_featured: Boolean
   created_at: String
   updated_at: String
@@ -25,10 +27,12 @@ type Property {
 input CreatePropertyInput {
   type: String!
   title: String!
+  name: String!
   description: String!
   bedrooms: Int!
   bathrooms: Int!
   size: Float!
+  internal_facilities: [String]
   furnitures: [String]
   orientation: String
   block: String
@@ -42,9 +46,11 @@ input CreatePropertyInput {
 input UpdatePropertyInput {
   type: String
   title: String
+  name: String
   description: String
   bedrooms: Int
   bathrooms: Int
+  internal_facilities: [String]
   furnitures: [String]
   size: Float
   orientation: String

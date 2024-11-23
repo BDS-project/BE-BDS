@@ -2,27 +2,106 @@ import BlogService from '../../services/BlogService.js';
 
 const resolvers = {
   Query: {
-    blogs: async (_, __, { user }) => {
-      if (!user) throw new Error('Unauthorized');
-      return await BlogService.getAllBlogs(user._id);
+    blogs: async () => {
+      return await BlogService.getAllBlogs();
     },
-    blog: async (_, { id }, { user }) => {
-      if (!user) throw new Error('Unauthorized');
+    blog: async (_, { id }) => {
       return await BlogService.getBlogById(id);
     }
   },
   Mutation: {
-    createBlog: async (_, { title, content, author }, { user }) => {
-      if (!user) throw new Error('Unauthorized');
+    createBlog: async (_, { title, content, author }, user) => {
+      if (!user) {
+        throw new Error('Unauthorized');
+      }
+
+      if (user.role !== 'admin') {
+        throw new Error('Only admin can create properties');
+      }
       return await BlogService.createBlog({ title, content, author });
     },
-    updateBlog: async (_, { id, title, content }, { user }) => {
-      if (!user) throw new Error('Unauthorized');
-      return await BlogService.updateBlog(id, { title, content });
+    updateBlog: async (_, { id, input }, user) => {
+      if (!user) {
+        throw new Error('Unauthorized');
+      }
+
+      if (user.role !== 'admin') {
+        throw new Error('Only admin can create properties');
+      }
+      return await BlogService.updateBlog(id, {
+        title: input.title,
+        content: input.content
+      });
     },
-    deleteBlog: async (_, { id }, { user }) => {
-      if (!user) throw new Error('Unauthorized');
+    deleteBlog: async (_, { id }, user) => {
+      if (!user) {
+        throw new Error('Unauthorized');
+      }
+
+      if (user.role !== 'admin') {
+        throw new Error('Only admin can create properties');
+      }
       return await BlogService.deleteBlog(id);
+    },
+    incrementBlogViews: async (_, { id }, user) => {
+      if (!user) {
+        throw new Error('Unauthorized');
+      }
+
+      if (user.role !== 'admin') {
+        throw new Error('Only admin can create properties');
+      }
+      const blog = await BlogService.getBlogById(id);
+      if (!blog) throw new Error('Blog not found');
+
+      blog.views += 1;
+      await blog.save();
+
+      return blog;
+    },
+    publishBlog: async (_, { id }, user) => {
+      if (!user) {
+        throw new Error('Unauthorized');
+      }
+
+      if (user.role !== 'admin') {
+        throw new Error('Only admin can create properties');
+      }
+      if (!user) throw new Error('Unauthorized');
+
+      const blog = await BlogService.getBlogById(id);
+      if (!blog) throw new Error('Blog not found');
+
+      if (blog.author.toString() !== user._id.toString()) {
+        throw new Error('Not authorized to publish this blog');
+      }
+
+      blog.status = 'published';
+      await blog.save();
+
+      return blog;
+    },
+    unpublishBlog: async (_, { id }, user) => {
+      if (!user) {
+        throw new Error('Unauthorized');
+      }
+
+      if (user.role !== 'admin') {
+        throw new Error('Only admin can create properties');
+      }
+      if (!user) throw new Error('Unauthorized');
+
+      const blog = await BlogService.getBlogById(id);
+      if (!blog) throw new Error('Blog not found');
+
+      if (blog.author.toString() !== user._id.toString()) {
+        throw new Error('Not authorized to unpublish this blog');
+      }
+
+      blog.status = 'draft';
+      await blog.save();
+
+      return blog;
     }
   }
 };

@@ -9,6 +9,27 @@ type PropertyImage {
   updated_at: String
 }
 
+type Property {
+  id: ID!
+  type: String! 
+  title: String!
+  name: String!
+  description: String!
+  bedrooms: Int!
+  bathrooms: Int!
+  size: Float!
+  orientation: String
+  block: String
+  price: Float!
+  location: Location!
+  project: Project!
+  furnitures: [String]
+  status: String
+  is_featured: Boolean
+  created_at: String
+  updated_at: String
+}
+
 type Query {
   propertyImages(propertyId: ID!): [PropertyImage!]! # Lấy tất cả hình ảnh của một Property
   propertyImage(id: ID!): PropertyImage # Lấy thông tin chi tiết của một hình ảnh

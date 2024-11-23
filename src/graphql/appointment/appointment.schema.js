@@ -1,22 +1,52 @@
 export default `
-  type Appointment {
+ type Appointment {
     id: ID!
-    user: User!
-    property: Property!
-    dateTime: String!
-    status: String!
+    full_name: String!
+    email: String!
+    phone: String!
+    appointment_date: String!
+    property: String!
+    status: AppointmentStatus!
+    customer: User
+    advisor: User
     created_at: String
     updated_at: String
   }
 
+  enum AppointmentStatus {
+    pending
+    confirmed  
+    cancelled
+  }
+
+  input CreateAppointmentInput {
+    full_name: String!
+    email: String!
+    phone: String!
+    appointment_date: String!
+    property: String!
+  }
+
+  input CreateAppointmentInput {
+    full_name: String!
+    email: String!
+    phone: String!
+    appointment_date: String!
+    property: String!
+    customer: String
+    advisor: String
+  }
+
+
   type Query {
     appointments: [Appointment!]!
     appointment(id: ID!): Appointment
+    myAppointments: [Appointment!]!
   }
 
   type Mutation {
-    createAppointment(propertyId: ID!, dateTime: String!): Appointment
-    updateAppointment(id: ID!, dateTime: String, status: String): Appointment
-    deleteAppointment(id: ID!): String
+    createAppointment(input: CreateAppointmentInput!): Appointment!
+    updateAppointmentStatus(id: ID!, status: AppointmentStatus!): Appointment!
+    cancelAppointment(id: ID!): Appointment!
   }
 `;

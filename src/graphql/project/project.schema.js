@@ -30,6 +30,7 @@ type Property {
   id: ID!
   type: String! 
   title: String!
+  name: String!
   description: String!
   bedrooms: Int!
   bathrooms: Int!
@@ -39,8 +40,18 @@ type Property {
   price: Float!
   location: Location!
   furnitures: [String]
+  property_images: [PropertyImage!]!
   status: String
   is_featured: Boolean
+  created_at: String
+  updated_at: String
+}
+
+type PropertyImage {
+  id: ID!
+  url: String!
+  title: String!
+  is_primary: Boolean!
   created_at: String
   updated_at: String
 }

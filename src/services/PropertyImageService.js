@@ -79,7 +79,6 @@ const PropertyImageService = {
     }
   },
 
-  // Bulk operations
   createManyPropertyImages: async (imagesData) => {
     try {
       const propertyImages = await PropertyImage.insertMany(imagesData);

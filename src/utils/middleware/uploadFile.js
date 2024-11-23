@@ -1,7 +1,6 @@
 import bucket from '../../config/storage.js';
 
 const uploadFileToGCS = async ({ createReadStream, folder, filename }) => {
-  console.log('createReadStream:', createReadStream);
   const blob = bucket.file(`${folder}/${filename}`);
 
   const blobStream = blob.createWriteStream({

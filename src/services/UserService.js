@@ -7,11 +7,9 @@ dotenv.config();
 
 const UserService = {
   getAllUsers: async (user) => {
-    console.log('user2:', user);
     try {
       if (user.role === 'admin') {
         const users = await User.find();
-        console.log('users:', users);
         return users;
       }
       throw new Error('Unauthorized');

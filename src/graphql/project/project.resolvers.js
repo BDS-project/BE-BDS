@@ -4,67 +4,120 @@ import {
   uploadFileToGCS,
   deleteFileFromGCS
 } from '../../utils/middleware/uploadFile.js';
+import PropertyImageService from '../../services/PropertyImageService.js';
+import PropertyService from '../../services/PropertyService.js';
 
 const resolvers = {
   Upload: GraphQLUpload,
 
   Query: {
-    projects: async () => await ProjectService.getAllProjects(),
-    project: async (_, { id }) => await ProjectService.getProjectById(id)
+    projects: async () => {
+      return await ProjectService.getAllProjects();
+    },
+    project: async (_, { id }) => {
+      return await ProjectService.getProjectById(id);
+    }
   },
 
   Mutation: {
     createProject: async (_parent, { input, image }, user) => {
+      console.log('image:', image);
+      console.log('input:', input);
       if (!user) throw new Error('Unauthorized');
-      if (user.role === 'admin') {
+      if (user.role !== 'admin')
+        throw new Error('Only admin can create projects');
+
+      try {
+        let fileUrl = null;
+
         if (image) {
-          try {
-            const { createReadStream } = await image;
-            const updatedFilename = input.name;
-            const folder = 'projects';
+          const { createReadStream } = await image;
+          const filename = input.name;
+          fileUrl = await uploadFileToGCS({
+            createReadStream,
+            folder: 'projects',
+            filename
+          });
+        }
 
-            const fileUrl = await uploadFileToGCS({
-              createReadStream,
-              folder,
-              filename: updatedFilename
-            });
+        input.image = fileUrl;
+        const newProject = await ProjectService.createProject(input);
+        return newProject;
+      } catch (error) {
+        if (input.image) {
+          await deleteFileFromGCS({
+            folder: 'projects',
+            filename: input.name
+          });
+        }
+        throw new Error(`Project creation failed: ${error.message}`);
+      }
+    },
 
-            try {
-              input.image = fileUrl;
-              return await ProjectService.createProject(input);
-            } catch (dbError) {
-              await deleteFileFromGCS({ folder, filename: updatedFilename });
-              throw dbError;
-            }
-          } catch (uploadError) {
-            throw new Error(`File upload failed: ${uploadError.message}`);
+    updateProject: async (_parent, { id, input, image }, user) => {
+      if (!user) throw new Error('Unauthorized');
+      if (user.role !== 'admin')
+        throw new Error('Only admin can update projects');
+
+      try {
+        const existingProject = await ProjectService.getProjectById(id);
+        let fileUrl = existingProject.image;
+
+        if (image) {
+          if (fileUrl) {
+            const filename = existingProject.name;
+            await deleteFileFromGCS({ folder: 'projects', filename });
           }
+
+          const { createReadStream } = await image;
+          const newFilename = `${input.name}_updated`;
+          fileUrl = await uploadFileToGCS({
+            createReadStream,
+            folder: 'projects',
+            filename: newFilename
+          });
         }
+
+        input.image = fileUrl;
+        const updatedProject = await ProjectService.updateProject(id, input);
+        return updatedProject;
+      } catch (error) {
+        throw new Error(`Project update failed: ${error.message}`);
       }
     },
 
-    updateProject: async (_parent, _args, user) => {
+    deleteProject: async (_parent, { id }, user) => {
       if (!user) throw new Error('Unauthorized');
-      if (user.role === 'admin') {
-        return await ProjectService.updateProject(_args.id, _args.input);
-      }
-    },
+      if (user.role !== 'admin')
+        throw new Error('Only admin can delete projects');
 
-    deleteProject: async (_parent, _args, user) => {
-      if (!user) throw new Error('Unauthorized');
-      if (user.role === 'admin') {
-        const furniture = await ProjectService.getFurnitureById(_args.id);
-        if (furniture) {
-          const folder = 'icons';
-          const filename = furniture.name;
-
-          const [deleteFileResult, deleteProject] = await Promise.all([
-            deleteFileFromGCS({ folder, filename }),
-            ProjectService.deleteProject(_args.id)
-          ]);
-
-          return deleteProject;
+      try {
+        const project = await ProjectService.getProjectById(id);
+        if (project.image) {
+          const filename = project.name;
+          await deleteFileFromGCS({ folder: 'projects', filename });
         }
+        const properties = project.properties || [];
+
+        await Promise.all(
+          properties.map(async (property) => {
+            const propertyImages = property.property_images || [];
+            await Promise.all(
+              propertyImages.map(async (image) => {
+                await deleteFileFromGCS({
+                  folder: 'properties',
+                  filename: image.title
+                });
+                await PropertyImageService.deletePropertyImage(image.id);
+              })
+            );
+            await PropertyService.deleteProperty(property.id);
+          })
+        );
+        const deletedProject = await ProjectService.deleteProject(id);
+        return `Project deleted successfully: ${deletedProject.name}`;
+      } catch (error) {
+        throw new Error(`Project deletion failed: ${error.message}`);
       }
     }
   }

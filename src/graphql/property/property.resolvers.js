@@ -27,17 +27,22 @@ const resolvers = {
         throw new Error('Only admin can create properties');
       }
 
+      let property;
+      let propertyImages = [];
+      let cloudImageUrls = [];
+
       try {
-        const property = await PropertyService.createProperty({ input });
+        property = await PropertyService.createProperty({ input });
 
         if (!images?.length) {
           return property;
         }
 
+        const filesname = [];
         const uploadPromises = images.map(async (image, index) => {
           const { createReadStream } = await image;
           const filename = `${input.title}_${index}`;
-
+          filesname.push(filename);
           return uploadFileToGCS({
             createReadStream,
             folder: 'properties',
@@ -45,33 +50,29 @@ const resolvers = {
           });
         });
 
-        const cloudImageUrls = await Promise.all(uploadPromises);
+        cloudImageUrls = await Promise.all(uploadPromises);
 
         const propertyImagePromises = cloudImageUrls.map((imageUrl, index) =>
           PropertyImageService.createPropertyImage({
             property: property._id,
             url: imageUrl,
-            title: imageUrl,
-            is_primary: index === 1 ? true : false
+            title: filesname[index],
+            is_primary: index === 0
           })
         );
+        propertyImages = await Promise.all(propertyImagePromises);
 
-        const propertyImages = await Promise.all(propertyImagePromises);
-
-        try {
-          const updatedProperty = await PropertyService.updateProperty(
-            property._id,
-            { images: propertyImages.map((img) => img._id) }
-          );
-
-          return updatedProperty;
-        } catch (dbError) {
+        return property;
+      } catch (error) {
+        if (propertyImages.length > 0) {
           await Promise.all(
             propertyImages.map((img) =>
               PropertyImageService.deletePropertyImage(img._id)
             )
           );
+        }
 
+        if (cloudImageUrls.length > 0) {
           await Promise.all(
             cloudImageUrls.map((url) =>
               deleteFileFromGCS({
@@ -80,15 +81,16 @@ const resolvers = {
               })
             )
           );
-
-          await PropertyService.deleteProperty(property._id);
-
-          throw dbError;
         }
-      } catch (error) {
+
+        if (property) {
+          await PropertyService.deleteProperty(property._id);
+        }
+
         throw new Error(`Property creation failed: ${error.message}`);
       }
     },
+
     updateProperty: async (_parent, { id, input, images }, user) => {
       if (!user) {
         throw new Error('Unauthorized');
@@ -98,14 +100,21 @@ const resolvers = {
         throw new Error('Only admin can update properties');
       }
 
-      if (images?.length) {
-        const oldProperty = await PropertyService.getPropertyById(id);
-        const oldImageIds = oldProperty.propertyImageIds || [];
+      let oldProperty;
+      let cloudImageUrls = [];
+      let propertyImages = [];
 
-        try {
-          const uploadPromises = images.map((image, index) => {
-            const { createReadStream } = image;
+      try {
+        oldProperty = await PropertyService.getPropertyById(id);
+
+        if (images?.length) {
+          const oldImages = oldProperty?.property_images || [];
+
+          const filesname = [];
+          const uploadPromises = images.map(async (image, index) => {
+            const { createReadStream } = await image;
             const filename = `${input.title}_${index}_updated`;
+            filesname.push(filename);
 
             return uploadFileToGCS({
               createReadStream,
@@ -114,62 +123,66 @@ const resolvers = {
             });
           });
 
-          const cloudImageUrls = await Promise.all(uploadPromises);
+          cloudImageUrls = await Promise.all(uploadPromises);
 
-          const propertyImagePromises = cloudImageUrls.map((imageUrl) =>
+          const propertyImagePromises = cloudImageUrls.map((imageUrl, index) =>
             PropertyImageService.createPropertyImage({
+              property: oldProperty._id,
               url: imageUrl,
-              title: input.title,
-              description: input.description || ''
+              title: filesname[index],
+              is_primary: index === 0
             })
           );
 
-          const propertyImages = await Promise.all(propertyImagePromises);
-          const newImageIds = propertyImages.map((img) => img.id);
+          propertyImages = await Promise.all(propertyImagePromises);
 
-          try {
-            const updatedProperty = await PropertyService.updateProperty(id, {
-              ...input,
-              propertyImageIds: newImageIds
-            });
+          const updatedProperty = await PropertyService.updateProperty(
+            id,
+            input
+          );
 
-            await Promise.all(
-              oldImageIds.map(async (oldId) => {
-                const oldImage =
-                  await PropertyImageService.getPropertyImageById(oldId);
-                await deleteFileFromGCS({
-                  folder: 'properties',
-                  filename: oldImage.url
-                });
-                await PropertyImageService.deletePropertyImage(oldId);
-              })
-            );
+          await Promise.all(
+            oldImages.map(async (oldImage) => {
+              await deleteFileFromGCS({
+                folder: 'properties',
+                filename: oldImage.title
+              });
+              await PropertyImageService.deletePropertyImage(oldImage.id);
+            })
+          );
 
-            return updatedProperty;
-          } catch (dbError) {
-            await Promise.all(
-              newImageIds.map((id) =>
-                PropertyImageService.deletePropertyImage(id)
-              )
-            );
-
-            await Promise.all(
-              cloudImageUrls.map((url) =>
-                deleteFileFromGCS({
-                  folder: 'properties',
-                  filename: url
-                })
-              )
-            );
-
-            throw dbError;
-          }
-        } catch (error) {
-          throw new Error(`Property update failed: ${error.message}`);
+          return updatedProperty;
         }
-      }
 
-      return await PropertyService.updateProperty(id, input);
+        return await PropertyService.updateProperty(id, input);
+      } catch (error) {
+        if (propertyImages.length > 0) {
+          await Promise.all(
+            propertyImages.map((img) =>
+              PropertyImageService.deletePropertyImage(img.id)
+            )
+          );
+        }
+
+        if (cloudImageUrls.length > 0) {
+          await Promise.all(
+            cloudImageUrls.map((url) =>
+              deleteFileFromGCS({
+                folder: 'properties',
+                filename: url
+              })
+            )
+          );
+        }
+
+        if (oldProperty && !images?.length) {
+          throw new Error(
+            `Failed to update property without images: ${error.message}`
+          );
+        }
+
+        throw new Error(`Property update failed: ${error.message}`);
+      }
     },
 
     deleteProperty: async (_parent, { id }, user) => {
@@ -183,21 +196,23 @@ const resolvers = {
 
       try {
         const property = await PropertyService.getPropertyById(id);
-        const imageIds = property.propertyImageIds || [];
+        const propertyImages = property.property_images || [];
 
         await Promise.all(
-          imageIds.map(async (imageId) => {
-            const image =
-              await PropertyImageService.getPropertyImageById(imageId);
+          propertyImages.map(async (propertyImage) => {
+            const image = await PropertyImageService.getPropertyImageById(
+              propertyImage.id
+            );
             await deleteFileFromGCS({
               folder: 'properties',
-              filename: image.url
+              filename: image.title
             });
-            await PropertyImageService.deletePropertyImage(imageId);
+            await PropertyImageService.deletePropertyImage(image.id);
           })
         );
 
-        return await PropertyService.deleteProperty(id);
+        await PropertyService.deleteProperty(id);
+        return 'Property deleted successfully';
       } catch (error) {
         throw new Error(`Property deletion failed: ${error.message}`);
       }

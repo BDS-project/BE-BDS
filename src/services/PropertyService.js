@@ -13,12 +13,12 @@ const PropertyService = {
     }
   },
 
-  createProperty: async (propertyData) => {
-    console.log('propertyData:', propertyData);
+  createProperty: async ({ input }) => {
     try {
-      const property = new Property(propertyData);
+      const property = new Property(input);
       await property.save();
       await property.populate('project', 'name address developer');
+
       return property;
     } catch (error) {
       throw new Error(error.message);

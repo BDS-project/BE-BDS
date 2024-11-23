@@ -4,6 +4,7 @@ const PropertySchema = new mongoose.Schema(
   {
     type: { type: String, enum: ['rent', 'sale'], required: true },
     title: { type: String, required: true },
+    name: { type: String, required: true },
     description: { type: String, required: true },
     bedrooms: { type: Number, required: true },
     bathrooms: { type: Number, required: true },
@@ -22,6 +23,7 @@ const PropertySchema = new mongoose.Schema(
       required: true,
       index: true
     },
+    internal_facilities: [{ type: String }],
     furnitures: [{ type: String }],
     status: {
       type: String,
@@ -34,7 +36,7 @@ const PropertySchema = new mongoose.Schema(
 );
 
 PropertySchema.index({ project: 1, status: 1 });
-PropertySchema.virtual('propertyimages', {
+PropertySchema.virtual('property_images', {
   ref: 'PropertyImage',
   localField: '_id',
   foreignField: 'property',
@@ -43,7 +45,7 @@ PropertySchema.virtual('propertyimages', {
 });
 
 PropertySchema.pre(['find', 'findOne', 'findOneAndUpdate'], function () {
-  this.populate('propertyimages');
+  this.populate('property_images');
 });
 
 export default mongoose.model('Property', PropertySchema);
