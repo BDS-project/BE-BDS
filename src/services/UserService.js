@@ -112,8 +112,28 @@ const UserService = {
 
   getUserById: async (userId) => {
     try {
-      const user = await User.findById(userId);
-      return user;
+      const userProfile = await User.findById(userId);
+
+      if (userProfile.role === 'advisor') {
+        await userProfile.populate({
+          path: 'advisor_appointments',
+          select: 'status appointment_date property',
+          populate: {
+            path: 'customer',
+            select: 'first_name last_name email'
+          }
+        });
+      } else {
+        await userProfile.populate({
+          path: 'customer_appointments',
+          select: 'status appointment_date property',
+          populate: {
+            path: 'advisor',
+            select: 'first_name last_name email'
+          }
+        });
+      }
+      return userProfile;
     } catch (error) {
       throw new Error(error.message);
     }

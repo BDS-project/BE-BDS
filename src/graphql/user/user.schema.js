@@ -9,10 +9,29 @@ type User {
   email: String!
   role: String!
   status: String!
+  customer_appointments: [Appointment]
+  advisor_appointments: [Appointment]
   created_at: String
   updated_at: String
 }
+  
+type Appointment {
+    id: ID!
+    full_name: String!
+    email: String!
+    phone: String!
+    appointment_date: String!
+    property: String!
+    status: AppointmentStatus!
+    customer: User!
+    advisor: User
+  }
 
+   enum AppointmentStatus {
+    pending
+    confirmed  
+    cancelled
+  }
 type AuthResponse {
   accessToken: String!
   refreshToken: String!

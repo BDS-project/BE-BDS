@@ -45,7 +45,7 @@ const appointmentSchema = new mongoose.Schema(
   }
 );
 
-appointmentSchema.pre(['find', 'findOne'], function() {
+appointmentSchema.pre(['find', 'findOne'], function () {
   this.populate([
     { path: 'customer', select: 'first_name last_name email' },
     { path: 'advisor', select: 'first_name last_name email' }

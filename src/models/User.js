@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
   { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }
 );
 
-userSchema.virtual('customerAppointments', {
+userSchema.virtual('customer_appointments', {
   ref: 'Appointment',
   localField: '_id',
   foreignField: 'customer',
@@ -30,7 +30,7 @@ userSchema.virtual('customerAppointments', {
   options: { sort: { created_at: -1 } }
 });
 
-userSchema.virtual('advisorAppointments', {
+userSchema.virtual('advisor_appointments', {
   ref: 'Appointment',
   localField: '_id',
   foreignField: 'advisor',
@@ -38,8 +38,11 @@ userSchema.virtual('advisorAppointments', {
   options: { sort: { created_at: -1 } }
 });
 
-userSchema.pre(['find', 'findOne'], function() {
-  const populateField = this._conditions.role === 'advisor' ? 'advisorAppointments' : 'customerAppointments';
+userSchema.pre(['find', 'findOne'], function () {
+  const populateField =
+    this._conditions.role === 'advisor'
+      ? 'advisor_appointments'
+      : 'customer_appointments';
   this.populate(populateField);
 });
 
