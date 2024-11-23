@@ -6,12 +6,10 @@ import User from '../models/User.js';
 dotenv.config();
 
 const UserService = {
-  getAllUsers: async (user) => {
+  getAllUsers: async () => {
     try {
-      if (user.role === 'admin') {
-        const users = await User.find();
-        return users;
-      }
+      const users = await User.find();
+      return users;
       throw new Error('Unauthorized');
     } catch (error) {
       console.log('error:', error);
@@ -29,9 +27,10 @@ const UserService = {
     }
   },
 
-  registerUser: async (userData) => {
+  registerUser: async ({ input }) => {
+    console.log('input:', input);
     try {
-      const { firstName, lastName, email, password } = userData;
+      const { first_name, last_name, email, password } = input;
 
       const existingUser = await User.findOne({ email });
       if (existingUser) {
@@ -39,8 +38,8 @@ const UserService = {
       }
       const hashedPassword = await bcrypt.hash(password, 10);
       const user = new User({
-        first_name: firstName,
-        last_name: lastName,
+        first_name: first_name,
+        last_name: last_name,
         email,
         password: hashedPassword
       });
@@ -48,7 +47,7 @@ const UserService = {
       const accessToken = jwt.sign(
         { userId: user._id },
         process.env.JWT_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: '5d' }
       );
       const refreshToken = jwt.sign(
         { userId: user._id },
@@ -111,32 +110,9 @@ const UserService = {
     }
   },
 
-  getUserById: async (userId, currentUser) => {
+  getUserById: async (userId) => {
     try {
-      if (
-        currentUser.role === 'admin' ||
-        currentUser._id.toString() === userId
-      ) {
-        const user = await User.findById(userId);
-        if (!user) {
-          throw new Error('User not found');
-        }
-        return user;
-      }
-      throw new Error('Unauthorized');
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  },
-
-  getProfile: async (userId, userData) => {
-    try {
-      const { firstName, lastName, email } = userData;
-      const user = await User.findByIdAndUpdate(
-        userId,
-        { firstName, lastName, email },
-        { new: true }
-      );
+      const user = await User.findById(userId);
       return user;
     } catch (error) {
       throw new Error(error.message);

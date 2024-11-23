@@ -23,7 +23,7 @@ input CreateUserInput {
   last_name: String!
   email: String!
   password: String!
-  role: String!
+  role: String
   status: String
 }
 

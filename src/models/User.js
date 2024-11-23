@@ -22,4 +22,25 @@ const userSchema = new mongoose.Schema(
   { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }
 );
 
+userSchema.virtual('customerAppointments', {
+  ref: 'Appointment',
+  localField: '_id',
+  foreignField: 'customer',
+  justOne: false,
+  options: { sort: { created_at: -1 } }
+});
+
+userSchema.virtual('advisorAppointments', {
+  ref: 'Appointment',
+  localField: '_id',
+  foreignField: 'advisor',
+  justOne: false,
+  options: { sort: { created_at: -1 } }
+});
+
+userSchema.pre(['find', 'findOne'], function() {
+  const populateField = this._conditions.role === 'advisor' ? 'advisorAppointments' : 'customerAppointments';
+  this.populate(populateField);
+});
+
 export default mongoose.model('User', userSchema);

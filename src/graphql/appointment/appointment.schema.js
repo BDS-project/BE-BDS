@@ -1,12 +1,12 @@
 export default `
  type Appointment {
     id: ID!
-    full_name: String!
-    email: String!
-    phone: String!
-    appointment_date: String!
-    property: String!
-    status: AppointmentStatus!
+    full_name: String
+    email: String
+    phone: String
+    appointment_date: String
+    property: String
+    status: AppointmentStatus
     customer: User
     advisor: User
     created_at: String
@@ -19,6 +19,18 @@ export default `
     cancelled
   }
 
+type User {
+  id: ID!
+  avatar: String
+  first_name: String
+  last_name: String
+  email: String
+  role: String
+  status: String
+  created_at: String
+  updated_at: String
+}
+
   input CreateAppointmentInput {
     full_name: String!
     email: String!
@@ -27,14 +39,15 @@ export default `
     property: String!
   }
 
-  input CreateAppointmentInput {
-    full_name: String!
-    email: String!
-    phone: String!
-    appointment_date: String!
-    property: String!
+  input UpdateAppointmentInput {
+    full_name: String
+    email: String
+    phone: String
+    appointment_date: String
+    property: String
     customer: String
     advisor: String
+    status: AppointmentStatus
   }
 
 
@@ -46,7 +59,6 @@ export default `
 
   type Mutation {
     createAppointment(input: CreateAppointmentInput!): Appointment!
-    updateAppointmentStatus(id: ID!, status: AppointmentStatus!): Appointment!
-    cancelAppointment(id: ID!): Appointment!
+    updateAppointment(id: ID!, input: UpdateAppointmentInput!): Appointment!
   }
 `;

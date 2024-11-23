@@ -36,6 +36,7 @@ const PropertySchema = new mongoose.Schema(
 );
 
 PropertySchema.index({ project: 1, status: 1 });
+
 PropertySchema.virtual('property_images', {
   ref: 'PropertyImage',
   localField: '_id',

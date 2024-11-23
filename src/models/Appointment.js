@@ -39,11 +39,17 @@ const appointmentSchema = new mongoose.Schema(
     }
   },
   {
-    timestamps: {
-      createdAt: 'created_at',
-      updatedAt: 'updated_at'
-    }
+    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
   }
 );
+
+appointmentSchema.pre(['find', 'findOne'], function() {
+  this.populate([
+    { path: 'customer', select: 'first_name last_name email' },
+    { path: 'advisor', select: 'first_name last_name email' }
+  ]);
+});
 
 export default mongoose.model('Appointment', appointmentSchema);

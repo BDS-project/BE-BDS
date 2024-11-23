@@ -27,8 +27,10 @@ const startServer = async () => {
       context: async ({ req }) => {
         const { operationName } = req.body;
         if (
-          operationName === 'RegisterUser' ||
-          operationName === 'LoginUser' ||
+          operationName === 'register' ||
+          operationName === 'login' ||
+          operationName === 'blogs' ||
+          operationName === 'blog' ||
           operationName === 'properties' ||
           operationName === 'property' ||
           operationName === 'projects' ||
