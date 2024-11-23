@@ -1,9 +1,12 @@
 export default `
+scalar Upload
+
 type Project {
   id: ID!
   name: String!
   location_advantages: [String!]
   project_information: [String!]
+  image: String!
   address: String!
   province: String!
   district: String!
@@ -16,6 +19,28 @@ type Project {
   developer: String
   launch_year: Int
   status: String
+  properties:[Property!]
+  property_types: String
+  is_featured: Boolean
+  created_at: String
+  updated_at: String
+}
+
+type Property {
+  id: ID!
+  type: String! 
+  title: String!
+  description: String!
+  bedrooms: Int!
+  bathrooms: Int!
+  size: Float!
+  orientation: String
+  block: String
+  price: Float!
+  location: Location!
+  furnitures: [String]
+  status: String
+  is_featured: Boolean
   created_at: String
   updated_at: String
 }
@@ -36,6 +61,8 @@ input CreateProjectInput {
   developer: String
   launch_year: Int
   status: String
+  property_types: String
+  is_featured: Boolean
 }
 
 input UpdateProjectInput {
@@ -54,6 +81,8 @@ input UpdateProjectInput {
   developer: String
   launch_year: Int
   status: String
+  property_types: String
+  is_featured: Boolean
 }
 
 
@@ -68,9 +97,9 @@ type Query {
 }
 
 type Mutation {
-  createProject(input: CreateProjectInput!): Project
+  createProject(input: CreateProjectInput!, image: Upload!): Project
 
-  updateProject(id: ID!, input: UpdateProjectInput!): Project
+  updateProject(id: ID!, input: UpdateProjectInput!, image: Upload): Project
 
   deleteProject(id: ID!): String
 }

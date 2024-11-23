@@ -13,7 +13,9 @@ const AppointmentService = {
 
   getAllAppointments: async (userId) => {
     try {
-      const appointments = await Appointment.find({ user: userId }).populate('property');
+      const appointments = await Appointment.find({ user: userId }).populate(
+        'property'
+      );
       return appointments;
     } catch (error) {
       throw new Error(error.message);
@@ -22,7 +24,8 @@ const AppointmentService = {
 
   getAppointmentById: async (appointmentId) => {
     try {
-      const appointment = await Appointment.findById(appointmentId).populate('property');
+      const appointment =
+        await Appointment.findById(appointmentId).populate('property');
       if (!appointment) {
         throw new Error('Appointment not found');
       }
@@ -34,7 +37,11 @@ const AppointmentService = {
 
   updateAppointment: async (appointmentId, appointmentData) => {
     try {
-      const appointment = await Appointment.findByIdAndUpdate(appointmentId, appointmentData, { new: true });
+      const appointment = await Appointment.findByIdAndUpdate(
+        appointmentId,
+        appointmentData,
+        { new: true }
+      );
       if (!appointment) {
         throw new Error('Appointment not found');
       }

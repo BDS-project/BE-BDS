@@ -2,6 +2,7 @@ export default `
 type PropertyImage {
   id: ID!
   property: Property!
+  title: String!
   url: String!
   is_primary: Boolean!
   created_at: String
@@ -16,6 +17,7 @@ type Query {
 type Mutation {
   createPropertyImage(
     property: ID!,
+    title: String!
     url: String!,
     is_primary: Boolean
   ): PropertyImage

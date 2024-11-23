@@ -3,7 +3,7 @@ import UserService from '../../services/UserService.js';
 
 const resolvers = {
   Query: {
-    users: async (_parent, _args, user, _info) => {
+    users: async (_parent, _args, user) => {
       if (!user) throw new Error('Unauthorized');
       if (user.role === 'admin') {
         return await User.find({});
@@ -17,9 +17,12 @@ const resolvers = {
   Mutation: {
     register: async (_, args) => await UserService.registerUser(args),
     login: async (_, args) => await UserService.loginUser(args),
-    createUser: async (_, args, { user }) => {
+    createUser: async (_, { input, avatar }, user) => {
+      console.log('user:', user);
+      console.log('avatar:', avatar);
+      console.log('input:', input);
       if (!user) throw new Error('Unauthorized');
-      return await UserService.createUser(args);
+      return await UserService.createUser(input);
     },
     updateUser: async (_, { id, ...args }, { user }) => {
       if (!user) throw new Error('Unauthorized');

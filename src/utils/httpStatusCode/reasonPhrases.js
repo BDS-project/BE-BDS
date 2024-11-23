@@ -25,7 +25,7 @@ const ReasonPhrases = {
   MULTIPLE_CHOICES: 'Multiple Choices',
   NETWORK_AUTHENTICATION_REQUIRED: 'Network Authentication Required',
   NO_CONTENT: 'No Content',
-  NON_AUTHORITATIVE_INFORMATION: 'Non Authoritative Information',
+  NON_AUTHORITATIVERMATION: 'Non Authoritative Information',
   NOT_ACCEPTABLE: 'Not Acceptable',
   NOT_FOUND: 'Not Found',
   NOT_IMPLEMENTED: 'Not Implemented',

@@ -37,7 +37,11 @@ const FurnitureService = {
 
   updateFurniture: async (furnitureId, furnitureData) => {
     try {
-      const furniture = await Furniture.findByIdAndUpdate(furnitureId, furnitureData, { new: true });
+      const furniture = await Furniture.findByIdAndUpdate(
+        furnitureId,
+        furnitureData,
+        { new: true }
+      );
       if (!furniture) {
         throw new Error('Furniture not found');
       }

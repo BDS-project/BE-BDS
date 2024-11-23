@@ -13,5 +13,24 @@ import furnitureSchema from './furniture/furniture.schema.js';
 import projectSchema from './project/project.schema.js';
 import furnitureResolvers from './furniture/furniture.resolvers.js';
 
-export const typeDefs = [userSchema, appointmentSchema, propertySchema, chatbotSchema, blogSchema, propertySchema, projectSchema, furnitureSchema];
-export const resolvers = [userResolvers, appointmentResolvers, propertyResolvers, chatbotResolvers, blogResolvers, projectResolvers, furnitureResolvers];
+export const typeDefs = [
+  userSchema,
+  appointmentSchema,
+  propertySchema,
+  chatbotSchema,
+  blogSchema,
+  propertySchema,
+  projectSchema,
+  furnitureSchema,
+  propertySchema
+];
+export const resolvers = [
+  userResolvers,
+  appointmentResolvers,
+  propertyResolvers,
+  chatbotResolvers,
+  blogResolvers,
+  projectResolvers,
+  furnitureResolvers,
+  propertyResolvers
+];

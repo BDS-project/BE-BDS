@@ -13,7 +13,9 @@ const BlogService = {
 
   getAllBlogs: async () => {
     try {
-      const blogs = await Blog.find().populate('author', 'firstName lastName').populate('category', 'name');
+      const blogs = await Blog.find()
+        .populate('author', 'firstName lastName')
+        .populate('category', 'name');
       return blogs;
     } catch (error) {
       throw new Error(error.message);
@@ -22,7 +24,9 @@ const BlogService = {
 
   getBlogById: async (blogId) => {
     try {
-      const blog = await Blog.findById(blogId).populate('author', 'firstName lastName').populate('category', 'name');
+      const blog = await Blog.findById(blogId)
+        .populate('author', 'firstName lastName')
+        .populate('category', 'name');
       if (!blog) {
         throw new Error('Blog post not found');
       }
@@ -34,7 +38,9 @@ const BlogService = {
 
   updateBlog: async (blogId, blogData) => {
     try {
-      const blog = await Blog.findByIdAndUpdate(blogId, blogData, { new: true });
+      const blog = await Blog.findByIdAndUpdate(blogId, blogData, {
+        new: true
+      });
       if (!blog) {
         throw new Error('Blog post not found');
       }

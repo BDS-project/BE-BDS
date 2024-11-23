@@ -37,7 +37,9 @@ const ProjectService = {
 
   updateProject: async (projectId, projectData) => {
     try {
-      const project = await Project.findByIdAndUpdate(projectId, projectData, { new: true });
+      const project = await Project.findByIdAndUpdate(projectId, projectData, {
+        new: true
+      });
       if (!project) {
         throw new Error('Project not found');
       }

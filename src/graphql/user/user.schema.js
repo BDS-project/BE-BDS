@@ -1,32 +1,53 @@
 export default `
-  type User {
-    id: ID!
-    first_name: String!
-    last_name: String!
-    email: String!
-    role: String!
-    status: String! 
-    created_at: String
-    updated_at: String
-  }
+scalar Upload
 
-  type AuthResponse {
-    accessToken: String!
-    refreshToken: String!
-  }
+type User {
+  id: ID!
+  avatar: String
+  first_name: String!
+  last_name: String!
+  email: String!
+  role: String!
+  status: String!
+  created_at: String
+  updated_at: String
+}
 
-  type Query {
-    users: [User!]!
-    user(id: ID!): User
-    profile: User
-  }
+type AuthResponse {
+  accessToken: String!
+  refreshToken: String!
+}
 
-  type Mutation {
-    register(first_name: String!, last_name: String!, email: String!, password: String!): AuthResponse
-    login(email: String!, password: String!): AuthResponse
-    refreshToken: AuthResponse
-    createUser(first_name: String!, last_name: String!, email: String!, password: String!, role: String!): User
-    updateUser(id: ID!, first_name: String, last_name: String, email: String, isActive: Boolean): User
-    deleteUser(id: ID!): String
-  }
+input CreateUserInput {
+  first_name: String!
+  last_name: String!
+  email: String!
+  password: String!
+  role: String!
+  status: String
+}
+
+input UpdateUserInput {
+  first_name: String
+  last_name: String
+  email: String
+  password: String
+  role: String
+  status: String
+}
+
+type Query {
+  users: [User!]!
+  user(id: ID!): User
+  profile: User
+}
+
+type Mutation {
+  register(input: CreateUserInput!): AuthResponse
+  login(email: String!, password: String!): AuthResponse
+  refreshToken: AuthResponse
+  createUser(input: CreateUserInput!, avatar: Upload): User
+  updateUser(id: ID!, input: UpdateUserInput!, avatar: Upload): User
+  deleteUser(id: ID!): String
+}
 `;

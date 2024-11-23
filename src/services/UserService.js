@@ -47,8 +47,16 @@ const UserService = {
         password: hashedPassword
       });
       await user.save();
-      const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      const refreshToken = jwt.sign({ userId: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
+      const accessToken = jwt.sign(
+        { userId: user._id },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+      );
+      const refreshToken = jwt.sign(
+        { userId: user._id },
+        process.env.JWT_REFRESH_SECRET,
+        { expiresIn: '7d' }
+      );
 
       return { accessToken, refreshToken };
     } catch (error) {
@@ -67,8 +75,16 @@ const UserService = {
       if (!isPasswordValid) {
         throw new Error('Invalid email or password');
       }
-      const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '5h' });
-      const refreshToken = jwt.sign({ userId: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
+      const accessToken = jwt.sign(
+        { userId: user._id },
+        process.env.JWT_SECRET,
+        { expiresIn: '5h' }
+      );
+      const refreshToken = jwt.sign(
+        { userId: user._id },
+        process.env.JWT_REFRESH_SECRET,
+        { expiresIn: '7d' }
+      );
       return { accessToken, refreshToken };
     } catch (error) {
       throw new Error(error.message);
@@ -81,8 +97,16 @@ const UserService = {
       if (decoded.userId !== user._id.toString()) {
         throw new Error('Invalid token');
       }
-      const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      const refreshToken = jwt.sign({ userId: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
+      const accessToken = jwt.sign(
+        { userId: user._id },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+      );
+      const refreshToken = jwt.sign(
+        { userId: user._id },
+        process.env.JWT_REFRESH_SECRET,
+        { expiresIn: '7d' }
+      );
       return { accessToken, refreshToken };
     } catch (error) {
       throw new Error(error.message);
@@ -91,7 +115,10 @@ const UserService = {
 
   getUserById: async (userId, currentUser) => {
     try {
-      if (currentUser.role === 'admin' || currentUser._id.toString() === userId) {
+      if (
+        currentUser.role === 'admin' ||
+        currentUser._id.toString() === userId
+      ) {
         const user = await User.findById(userId);
         if (!user) {
           throw new Error('User not found');
@@ -107,7 +134,11 @@ const UserService = {
   getProfile: async (userId, userData) => {
     try {
       const { firstName, lastName, email } = userData;
-      const user = await User.findByIdAndUpdate(userId, { firstName, lastName, email }, { new: true });
+      const user = await User.findByIdAndUpdate(
+        userId,
+        { firstName, lastName, email },
+        { new: true }
+      );
       return user;
     } catch (error) {
       throw new Error(error.message);
@@ -116,8 +147,13 @@ const UserService = {
 
   updateUser: async (userId, userData, currentUser) => {
     try {
-      if (currentUser.role === 'admin' || currentUser._id.toString() === userId) {
-        const user = await User.findByIdAndUpdate(userId, userData, { new: true });
+      if (
+        currentUser.role === 'admin' ||
+        currentUser._id.toString() === userId
+      ) {
+        const user = await User.findByIdAndUpdate(userId, userData, {
+          new: true
+        });
         if (!user) {
           throw new Error('User not found');
         }
@@ -131,7 +167,10 @@ const UserService = {
 
   deleteUser: async (userId, currentUser) => {
     try {
-      if (currentUser.role === 'admin' || currentUser._id.toString() === userId) {
+      if (
+        currentUser.role === 'admin' ||
+        currentUser._id.toString() === userId
+      ) {
         const user = await User.findByIdAndDelete(userId);
         if (!user) {
           throw new Error('User not found');

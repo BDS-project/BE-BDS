@@ -3,7 +3,10 @@ import Property from '../models/Property.js';
 const PropertyService = {
   getAllProperties: async () => {
     try {
-      const properties = await Property.find().populate('project', 'name address developer');
+      const properties = await Property.find().populate(
+        'project',
+        'name address developer'
+      );
       return properties;
     } catch (error) {
       throw new Error(error.message);
@@ -11,6 +14,7 @@ const PropertyService = {
   },
 
   createProperty: async (propertyData) => {
+    console.log('propertyData:', propertyData);
     try {
       const property = new Property(propertyData);
       await property.save();
@@ -23,7 +27,10 @@ const PropertyService = {
 
   getPropertyById: async (propertyId) => {
     try {
-      const property = await Property.findById(propertyId).populate('project', 'name address developer');
+      const property = await Property.findById(propertyId).populate(
+        'project',
+        'name address developer'
+      );
       if (!property) {
         throw new Error('Property not found');
       }
@@ -35,10 +42,11 @@ const PropertyService = {
 
   updateProperty: async (propertyId, propertyData) => {
     try {
-      const property = await Property.findByIdAndUpdate(propertyId, propertyData, { new: true }).populate(
-        'project',
-        'name address developer'
-      );
+      const property = await Property.findByIdAndUpdate(
+        propertyId,
+        propertyData,
+        { new: true }
+      ).populate('project', 'name address developer');
       if (!property) {
         throw new Error('Property not found');
       }

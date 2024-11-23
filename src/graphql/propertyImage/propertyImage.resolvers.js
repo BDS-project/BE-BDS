@@ -1,28 +1,26 @@
-import PropertyService from '../../services/PropertyService.js';
+import PropertyImageService from '../../services/PropertyImageService.js';
 
 const resolvers = {
   Query: {
-    properties: async (_, __, { user }) => {
-      if (!user) throw new Error('Unauthorized');
-      return await PropertyService.getAllProperties(user._id);
+    propertyimages: async () => {
+      return await PropertyImageService.getAllPropertyImages();
     },
-    property: async (_, { id }, { user }) => {
-      if (!user) throw new Error('Unauthorized');
-      return await PropertyService.getPropertyById(id);
+    propertyimage: async (_, { id }) => {
+      return await PropertyImageService.getImagesByPropertyId(id);
     }
   },
   Mutation: {
-    createProperty: async (_, { title, description, price, category, location, status }, { user }) => {
+    createPropertyImage: async (_parent, { input, images }, user) => {
       if (!user) throw new Error('Unauthorized');
-      return await PropertyService.createProperty({ title, description, price, category, location, status });
+      return await PropertyImageService.createPropertyImage(input);
     },
-    updateProperty: async (_, { id, ...args }, { user }) => {
+    updatePropertyImage: async (_parent, { input, images }, user) => {
       if (!user) throw new Error('Unauthorized');
-      return await PropertyService.updateProperty(id, args);
+      return await PropertyImageService.updatePropertyImage(id, input);
     },
-    deleteProperty: async (_, { id }, { user }) => {
+    deletePropertyImage: async (_parent, { id }, user) => {
       if (!user) throw new Error('Unauthorized');
-      return await PropertyService.deleteProperty(id);
+      return await PropertyImageService.deleteManyPropertyImages(id);
     }
   }
 };

@@ -3,7 +3,10 @@ import sessionClient, { projectId } from '../config/dialogflowConfig.js';
 
 const sendMessageToDialogflow = async (message, sessionId = uuidv4()) => {
   try {
-    const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
+    const sessionPath = sessionClient.projectAgentSessionPath(
+      projectId,
+      sessionId
+    );
 
     const request = {
       session: sessionPath,

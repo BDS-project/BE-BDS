@@ -23,7 +23,10 @@ const resolvers = {
     },
     updateAppointment: async (_, { id, dateTime, status }, { user }) => {
       if (!user) throw new Error('Unauthorized');
-      return await AppointmentService.updateAppointment(id, { dateTime, status });
+      return await AppointmentService.updateAppointment(id, {
+        dateTime,
+        status
+      });
     },
     deleteAppointment: async (_, { id }, { user }) => {
       if (!user) throw new Error('Unauthorized');

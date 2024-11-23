@@ -26,7 +26,14 @@ const startServer = async () => {
       resolvers,
       context: async ({ req }) => {
         const { operationName } = req.body;
-        if (operationName === 'RegisterUser' || operationName === 'LoginUser') {
+        if (
+          operationName === 'RegisterUser' ||
+          operationName === 'LoginUser' ||
+          operationName === 'properties' ||
+          operationName === 'property' ||
+          operationName === 'projects' ||
+          operationName === 'project'
+        ) {
           return {};
         }
         const user = await authenticate(req);
