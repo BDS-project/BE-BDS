@@ -11,8 +11,8 @@ const resolvers = {
   Upload: GraphQLUpload,
 
   Query: {
-    projects: async () => {
-      return await ProjectService.getAllProjects();
+    projects: async (_parent, { filter }) => {
+      return await ProjectService.getAllProjects(filter);
     },
     project: async (_, { id }) => {
       return await ProjectService.getProjectById(id);
@@ -21,11 +21,8 @@ const resolvers = {
 
   Mutation: {
     createProject: async (_parent, { input, image }, user) => {
-      console.log('image:', image);
-      console.log('input:', input);
-      if (!user) throw new Error('Unauthorized');
-      if (user.role !== 'admin')
-        throw new Error('Only admin can create projects');
+      // if (user.role !== 'admin')
+      //   throw new Error('Only admin can create projects');
 
       try {
         let fileUrl = null;
@@ -55,9 +52,8 @@ const resolvers = {
     },
 
     updateProject: async (_parent, { id, input, image }, user) => {
-      if (!user) throw new Error('Unauthorized');
-      if (user.role !== 'admin')
-        throw new Error('Only admin can update projects');
+      // if (user.role !== 'admin')
+      //   throw new Error('Only admin can update projects');
 
       try {
         const existingProject = await ProjectService.getProjectById(id);
@@ -87,9 +83,8 @@ const resolvers = {
     },
 
     deleteProject: async (_parent, { id }, user) => {
-      if (!user) throw new Error('Unauthorized');
-      if (user.role !== 'admin')
-        throw new Error('Only admin can delete projects');
+      // if (user.role !== 'admin')
+      //   throw new Error('Only admin can delete projects');
 
       try {
         const project = await ProjectService.getProjectById(id);

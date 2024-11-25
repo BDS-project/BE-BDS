@@ -1,12 +1,44 @@
 import Property from '../models/Property.js';
 
 const PropertyService = {
-  getAllProperties: async () => {
+  getAllProperties: async (filter) => {
     try {
-      const properties = await Property.find().populate(
-        'project',
-        'name address developer'
-      );
+      const query = {};
+
+      if (filter?.name) {
+        query.name = { $regex: filter.name, $options: 'i' };
+      }
+
+      if (filter?.min_price !== undefined || filter?.max_price !== undefined) {
+        query.price = {};
+        if (filter.min_price !== undefined) {
+          query.price.$gte = filter.min_price;
+        }
+        if (filter.max_price !== undefined) {
+          query.price.$lte = filter.max_price;
+        }
+      }
+
+      if (filter?.type) {
+        query.type = filter.type;
+      }
+
+      if (filter?.location) {
+        if (filter.location.city) {
+          query['location.city'] = filter.location.city;
+        }
+        if (filter.location.district) {
+          query['location.district'] = filter.location.district;
+        }
+        if (filter.location.address) {
+          query['location.address'] = {
+            $regex: filter.location.address,
+            $options: 'i'
+          };
+        }
+      }
+
+      const properties = await Property.find(query);
       return properties;
     } catch (error) {
       throw new Error(error.message);

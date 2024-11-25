@@ -33,6 +33,7 @@ const UserService = {
       const { first_name, last_name, email, password } = input;
 
       const existingUser = await User.findOne({ email });
+      console.log('existingUser:', existingUser);
       if (existingUser) {
         throw new Error('Email already exists');
       }
@@ -64,7 +65,7 @@ const UserService = {
   loginUser: async (userData) => {
     try {
       const { email, password } = userData;
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email }).exec();
       if (!user) {
         throw new Error('Invalid email or password');
       }
@@ -75,7 +76,7 @@ const UserService = {
       const accessToken = jwt.sign(
         { userId: user._id },
         process.env.JWT_SECRET,
-        { expiresIn: '5h' }
+        { expiresIn: '5d' }
       );
       const refreshToken = jwt.sign(
         { userId: user._id },

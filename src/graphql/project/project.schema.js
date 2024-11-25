@@ -28,7 +28,7 @@ type Project {
 
 type Property {
   id: ID!
-  type: String! 
+  type: TypeProperty! 
   title: String!
   name: String!
   description: String!
@@ -45,6 +45,20 @@ type Property {
   is_featured: Boolean
   created_at: String
   updated_at: String
+}
+
+enum TypeProperty {
+    rent
+    sale
+}
+
+input ProjectFilterInput {
+  name: String
+  province: String
+  district: String
+  ward: String
+  is_featured: Boolean
+  launch_year: Int
 }
 
 type PropertyImage {
@@ -103,7 +117,7 @@ type Block {
 }
 
 type Query {
-  projects: [Project!]!
+  projects(filter: ProjectFilterInput): [Project!]!
   project(id: ID!): Project
 }
 

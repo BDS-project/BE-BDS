@@ -3,7 +3,7 @@ scalar Upload
 
 type Property {
   id: ID!
-  type: String! 
+  type: TypeProperty! 
   title: String!
   name: String!
   description: String!
@@ -24,8 +24,13 @@ type Property {
   updated_at: String
 }
 
+enum TypeProperty {
+    rent
+    sale
+}
+
 input CreatePropertyInput {
-  type: String!
+  type: TypeProperty!
   title: String!
   name: String!
   description: String!
@@ -44,7 +49,7 @@ input CreatePropertyInput {
 }
 
 input UpdatePropertyInput {
-  type: String
+  type: TypeProperty
   title: String
   name: String
   description: String
@@ -60,6 +65,20 @@ input UpdatePropertyInput {
   project: ID
   status: String
   is_featured: Boolean
+}
+  
+input PropertyFilterInput {
+  name: String
+  min_price: Float
+  max_price: Float
+  type: TypeProperty
+  location: LocationFilterInput
+}
+
+input LocationFilterInput {
+  city: String
+  district: String
+  address: String
 }
 
 type Project {
@@ -118,7 +137,7 @@ input BlockInput {
 }
 
 type Query {
-  properties: [Property!]!
+  properties(filter: PropertyFilterInput): [Property!]!
   property(id: ID!): Property
 }
 

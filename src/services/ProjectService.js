@@ -1,9 +1,35 @@
 import Project from '../models/Project.js';
 
 const ProjectService = {
-  getAllProjects: async () => {
+  getAllProjects: async (filter) => {
+    const query = {};
+
+    if (filter?.name) {
+      query.name = { $regex: filter.name, $options: 'i' };
+    }
+
+    if (filter?.province) {
+      query.province = filter.province;
+    }
+
+    if (filter?.district) {
+      query.district = filter.district;
+    }
+
+    if (filter?.ward) {
+      query.ward = filter.ward;
+    }
+
+    if (filter?.is_featured !== undefined) {
+      query.is_featured = filter.is_featured;
+    }
+
+    if (filter?.launch_year !== undefined) {
+      query.launch_year = filter.launch_year;
+    }
+
     try {
-      const projects = await Project.find();
+      const projects = await Project.find(query);
       return projects;
     } catch (error) {
       throw new Error(error.message);

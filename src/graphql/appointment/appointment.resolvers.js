@@ -4,24 +4,16 @@ import AppointmentService from '../../services/AppointmentService.js';
 const resolvers = {
   Query: {
     appointments: async (_, __, user) => {
-      if (!user) {
-        throw new Error('Unauthorized');
-      }
-
-      if (user.role !== 'admin') {
-        throw new Error('Only admin can create properties');
-      }
+      // if (user.role !== 'admin') {
+      //   throw new Error('Only admin can create properties');
+      // }
       return await AppointmentService.getAllAppointments();
     },
 
     appointment: async (_, { id }, user) => {
-      if (!user) {
-        throw new Error('Unauthorized');
-      }
-
-      if (user.role !== 'admin') {
-        throw new Error('Only admin can create properties');
-      }
+      // if (user.role !== 'admin') {
+      //   throw new Error('Only admin can create properties');
+      // }
       const appointment = await AppointmentService.getAppointmentById(id);
       if (!appointment) throw new Error('Appointment not found');
 
@@ -29,28 +21,20 @@ const resolvers = {
     },
 
     myAppointments: async (_, __, user) => {
-      if (!user) throw new Error('Unauthorized');
       return await Appointment.find({ customer: user._id });
     }
   },
 
   Mutation: {
     createAppointment: async (_, { input }, user) => {
-      if (!user) {
-        throw new Error('Unauthorized');
-      }
-      input.customer = user.id;
+      input.customer = user.id ? user.id : "Guest";
       return await AppointmentService.createAppointment(input);
     },
 
     updateAppointment: async (_, { id, input }, user) => {
-      if (!user) {
-        throw new Error('Unauthorized');
-      }
-
-      if (user.role !== 'admin') {
-        throw new Error('Only admin can create properties');
-      }
+      // if (user.role !== 'admin') {
+      //   throw new Error('Only admin can create properties');
+      // }
       return await AppointmentService.updateAppointment(id, input);
     }
   }

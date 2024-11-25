@@ -19,10 +19,11 @@ scalar Upload
     updated_at: String
   }
 
-  enum BlogStatus {
+enum BlogStatus {
     published
     draft
-  }
+}
+
 type User {
   id: ID!
   avatar: String

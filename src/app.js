@@ -25,23 +25,10 @@ const startServer = async () => {
       typeDefs,
       resolvers,
       context: async ({ req }) => {
-        const { operationName } = req.body;
-        if (
-          operationName === 'register' ||
-          operationName === 'login' ||
-          operationName === 'blogs' ||
-          operationName === 'blog' ||
-          operationName === 'properties' ||
-          operationName === 'property' ||
-          operationName === 'projects' ||
-          operationName === 'project'
-        ) {
-          return {};
-        }
-        const user = await authenticate(req);
-        return user;
+        // return await authenticate(req);
       }
     });
+
     await server.start();
     server.applyMiddleware({ app });
 

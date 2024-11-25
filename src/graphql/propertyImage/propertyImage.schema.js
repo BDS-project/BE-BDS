@@ -11,7 +11,7 @@ type PropertyImage {
 
 type Property {
   id: ID!
-  type: String! 
+  type: TypeProperty! 
   title: String!
   name: String!
   description: String!
@@ -28,6 +28,11 @@ type Property {
   is_featured: Boolean
   created_at: String
   updated_at: String
+}
+
+enum TypeProperty {
+    rent
+    sale
 }
 
 type Query {

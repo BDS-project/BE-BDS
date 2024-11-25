@@ -9,8 +9,8 @@ const resolvers = {
   Upload: GraphQLUpload,
 
   Query: {
-    properties: async () => {
-      return await PropertyService.getAllProperties();
+    properties: async (_parent, { filter }) => {
+      return await PropertyService.getAllProperties(filter);
     },
     property: async (_, { id }) => {
       return await PropertyService.getPropertyById(id);
@@ -19,13 +19,9 @@ const resolvers = {
 
   Mutation: {
     createProperty: async (_parent, { input, images }, user) => {
-      if (!user) {
-        throw new Error('Unauthorized');
-      }
-
-      if (user.role !== 'admin') {
-        throw new Error('Only admin can create properties');
-      }
+      // if (user.role !== 'admin') {
+      //   throw new Error('Only admin can create properties');
+      // }
 
       let property;
       let propertyImages = [];
@@ -92,13 +88,9 @@ const resolvers = {
     },
 
     updateProperty: async (_parent, { id, input, images }, user) => {
-      if (!user) {
-        throw new Error('Unauthorized');
-      }
-
-      if (user.role !== 'admin') {
-        throw new Error('Only admin can update properties');
-      }
+      // if (user.role !== 'admin') {
+      //   throw new Error('Only admin can update properties');
+      // }
 
       let oldProperty;
       let cloudImageUrls = [];
@@ -186,13 +178,9 @@ const resolvers = {
     },
 
     deleteProperty: async (_parent, { id }, user) => {
-      if (!user) {
-        throw new Error('Unauthorized');
-      }
-
-      if (user.role !== 'admin') {
-        throw new Error('Only admin can delete properties');
-      }
+      // if (user.role !== 'admin') {
+      //   throw new Error('Only admin can delete properties');
+      // }
 
       try {
         const property = await PropertyService.getPropertyById(id);
