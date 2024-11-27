@@ -69,10 +69,16 @@ input UpdatePropertyInput {
   
 input PropertyFilterInput {
   name: String
+  price: Float
   min_price: Float
   max_price: Float
   type: TypeProperty
   location: LocationFilterInput
+  created_at: String
+  start_date: String
+  end_date: String
+  page: Int 
+  limit: Int
 }
 
 input LocationFilterInput {

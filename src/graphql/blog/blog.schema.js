@@ -38,13 +38,14 @@ type User {
     title: String!
     content: String!
     slug: String!
-    authorId: ID!
+    author: ID!
     status: BlogStatus
     description: String
     meta_title: String
     meta_description: String
     category: String
     tags: [String]
+    thumbnail: String
   }
 
   input UpdateBlogInput {
@@ -57,18 +58,31 @@ type User {
     meta_description: String
     category: String
     tags: [String]
+    thumbnail: String
   }
 
-  type BlogPagination {
-    items: [Blog!]!
-    total: Int!
-    page: Int!
-    limit: Int!
-    hasMore: Boolean!
+  input BlogFilterInput {
+    status: BlogStatus
+    description: String
+    meta_title: String
+    meta_description: String
+    category: String
+    created_at: String
+    start_date: String
+    end_date: String
+    title: String
+    slug: String
+    page: Int
+    limit: Int
+  }
+
+  type UploadResponse {
+    url: String!
+    filename: String!
   }
 
   type Query {
-    blogs(page: Int, limit: Int, status: BlogStatus): BlogPagination!
+    blogs(filter: BlogFilterInput): [Blog!]!
     blog(id: ID!): Blog
     blogBySlug(slug: String!): Blog
     searchBlogs(query: String!): [Blog!]!
@@ -76,6 +90,7 @@ type User {
 
   type Mutation {
     createBlog(input: CreateBlogInput!, thumbnail: Upload): Blog!
+    uploadImage(image: Upload!): UploadResponse!
     updateBlog(id: ID!, input: UpdateBlogInput!, thumbnail: Upload): Blog!
     deleteBlog(id: ID!): Boolean!
     incrementBlogViews(id: ID!): Blog!

@@ -22,7 +22,7 @@ const authenticate = async (req) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.userId);
-    console.log("user:", user)
+    console.log('user:', user);
 
     if (!user) {
       throw new GraphQLError('User is not authenticated', {

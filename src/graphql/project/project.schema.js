@@ -59,6 +59,11 @@ input ProjectFilterInput {
   ward: String
   is_featured: Boolean
   launch_year: Int
+  created_at: String
+  start_date: String
+  end_date: String
+  page: Int 
+  limit: Int
 }
 
 type PropertyImage {

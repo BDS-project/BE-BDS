@@ -28,8 +28,20 @@ const ProjectService = {
       query.launch_year = filter.launch_year;
     }
 
+    if (filter?.start_date || filter?.end_date) {
+      query.created_at = {};
+      if (filter.start_date)
+        query.created_at.$gte = new Date(filter.start_date);
+      if (filter.end_date) query.created_at.$lte = new Date(filter.end_date);
+    }
+
     try {
-      const projects = await Project.find(query);
+      const page = filter?.page || 1;
+      const limit = filter?.limit || 10;
+      const skip = (page - 1) * limit;
+
+      const projects = await Project.find(query).skip(skip).limit(limit);
+
       return projects;
     } catch (error) {
       throw new Error(error.message);

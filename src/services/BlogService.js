@@ -11,11 +11,35 @@ const BlogService = {
     }
   },
 
-  getAllBlogs: async () => {
+  getAllBlogs: async (filter) => {
     try {
-      const blogs = await Blog.find()
-        .populate('author', 'firstName lastName')
-        .populate('category', 'name');
+      const query = {};
+
+      if (filter?.status) query.status = filter.status;
+      if (filter?.category)
+        query.category = { $regex: filter.category, $options: 'i' };
+      if (filter?.title) query.title = { $regex: filter.title, $options: 'i' };
+      if (filter?.slug) query.slug = { $regex: filter.slug, $options: 'i' };
+      if (filter?.meta_title)
+        query.meta_title = { $regex: filter.meta_title, $options: 'i' };
+      if (filter?.meta_description)
+        query.meta_description = {
+          $regex: filter.meta_description,
+          $options: 'i'
+        };
+      if (filter?.description)
+        query.description = { $regex: filter.description, $options: 'i' };
+      if (filter?.start_date || filter?.end_date) {
+        query.created_at = {};
+        if (filter.start_date)
+          query.created_at.$gte = new Date(filter.start_date);
+        if (filter.end_date) query.created_at.$lte = new Date(filter.end_date);
+      }
+      const page = filter?.page || 1;
+      const limit = filter?.limit || 10;
+      const skip = (page - 1) * limit;
+
+      const blogs = await Blog.find(query).skip(skip).limit(limit);
       return blogs;
     } catch (error) {
       throw new Error(error.message);

@@ -2,17 +2,13 @@ import UserService from '../../services/UserService.js';
 
 const resolvers = {
   Query: {
-    users: async (_parent, _args, user) => {
-      if (!user) throw new Error('Unauthorized');
-      if (user.role === 'admin') {
-        return await UserService.getAllUsers();
-      }
+    users: async (_parent, { filter }, user) => {
+      // if (user.role === 'admin') {
+      // }
+      return await UserService.getAllUsers(filter);
     },
-    user: async (_, __, { id }, user) => {
-      if (!user) throw new Error('Unauthorized');
-      if (user.role === 'admin') {
-        return await UserService.getUserById(id);
-      }
+    user: async (_, { id }, user) => {
+      return await UserService.getUserById(id);
     },
     profile: async (_, __, user) => {
       if (!user) throw new Error('Unauthorized');
@@ -26,13 +22,11 @@ const resolvers = {
       if (!user) throw new Error('Unauthorized');
       return await UserService.createUser(input);
     },
-    updateUser: async (_, { id, ...args }, user) => {
-      if (!user) throw new Error('Unauthorized');
-      return await UserService.updateUser(id, args, user);
+    updateUser: async (_, { id, input }, user) => {
+      return await UserService.updateUser(id, input);
     },
     deleteUser: async (_, { id }, user) => {
-      if (!user) throw new Error('Unauthorized');
-      return await UserService.deleteUser(id, user);
+      return await UserService.deleteUser(id);
     }
   }
 };

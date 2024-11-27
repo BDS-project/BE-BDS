@@ -1,29 +1,41 @@
 import BlogService from '../../services/BlogService.js';
+import {
+  uploadFileToGCS,
+  deleteFileFromGCS
+} from '../../utils/middleware/uploadFile.js';
 
 const resolvers = {
   Query: {
-    blogs: async () => {
-      return await BlogService.getAllBlogs();
+    blogs: async (_parent, { filter }) => {
+      return await BlogService.getAllBlogs(filter);
     },
     blog: async (_, { id }) => {
       return await BlogService.getBlogById(id);
     }
   },
   Mutation: {
-    createBlog: async (_, { title, content, author }, user) => {
+    createBlog: async (_, { input }, user) => {
       // if (user.role !== 'admin') {
       //   throw new Error('Only admin can create properties');
       // }
-      return await BlogService.createBlog({ title, content, author });
+      return await BlogService.createBlog(input);
+    },
+    uploadImage: async (_, { image }) => {
+      if (image) {
+        const { createReadStream, filename } = await image;
+        const fileUrl = await uploadFileToGCS({
+          createReadStream,
+          folder: 'blogs',
+          filename
+        });
+        return { url: fileUrl, filename: filename };
+      }
     },
     updateBlog: async (_, { id, input }, user) => {
       // if (user.role !== 'admin') {
       //   throw new Error('Only admin can create properties');
       // }
-      return await BlogService.updateBlog(id, {
-        title: input.title,
-        content: input.content
-      });
+      return await BlogService.updateBlog(id, input);
     },
     deleteBlog: async (_, { id }, user) => {
       // if (user.role !== 'admin') {
@@ -50,11 +62,6 @@ const resolvers = {
 
       const blog = await BlogService.getBlogById(id);
       if (!blog) throw new Error('Blog not found');
-
-      if (blog.author.toString() !== user._id.toString()) {
-        throw new Error('Not authorized to publish this blog');
-      }
-
       blog.status = 'published';
       await blog.save();
 
@@ -67,10 +74,6 @@ const resolvers = {
 
       const blog = await BlogService.getBlogById(id);
       if (!blog) throw new Error('Blog not found');
-
-      if (blog.author.toString() !== user._id.toString()) {
-        throw new Error('Not authorized to unpublish this blog');
-      }
 
       blog.status = 'draft';
       await blog.save();

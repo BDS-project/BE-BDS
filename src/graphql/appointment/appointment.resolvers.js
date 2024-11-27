@@ -3,11 +3,11 @@ import AppointmentService from '../../services/AppointmentService.js';
 
 const resolvers = {
   Query: {
-    appointments: async (_, __, user) => {
+    appointments: async (_, __, { filter }) => {
       // if (user.role !== 'admin') {
       //   throw new Error('Only admin can create properties');
       // }
-      return await AppointmentService.getAllAppointments();
+      return await AppointmentService.getAllAppointments(filter);
     },
 
     appointment: async (_, { id }, user) => {
@@ -27,7 +27,8 @@ const resolvers = {
 
   Mutation: {
     createAppointment: async (_, { input }, user) => {
-      input.customer = user.id ? user.id : "Guest";
+      console.log('input:', input);
+      input.customer = user.id ? user.id : '674475497504fb0dada4e2be';
       return await AppointmentService.createAppointment(input);
     },
 

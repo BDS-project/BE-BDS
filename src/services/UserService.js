@@ -6,11 +6,26 @@ import User from '../models/User.js';
 dotenv.config();
 
 const UserService = {
-  getAllUsers: async () => {
+  getAllUsers: async (filter) => {
     try {
-      const users = await User.find();
+      let query = {};
+
+      if (filter) {
+        if (filter.role) query.role = filter.role;
+        if (filter.status) query.status = filter.status;
+        if (filter.email) query.email = { $regex: filter.email, $options: 'i' };
+        if (filter.first_name)
+          query.first_name = { $regex: filter.first_name, $options: 'i' };
+        if (filter.last_name)
+          query.last_name = { $regex: filter.last_name, $options: 'i' };
+      }
+
+      const page = filter?.page || 1;
+      const limit = filter?.limit || 10;
+      const skip = (page - 1) * limit;
+
+      const users = await User.find(query);
       return users;
-      throw new Error('Unauthorized');
     } catch (error) {
       console.log('error:', error);
       throw new Error(error.message);
@@ -140,39 +155,27 @@ const UserService = {
     }
   },
 
-  updateUser: async (userId, userData, currentUser) => {
+  updateUser: async (userId, userData) => {
     try {
-      if (
-        currentUser.role === 'admin' ||
-        currentUser._id.toString() === userId
-      ) {
-        const user = await User.findByIdAndUpdate(userId, userData, {
-          new: true
-        });
-        if (!user) {
-          throw new Error('User not found');
-        }
-        return user;
+      const user = await User.findByIdAndUpdate(userId, userData, {
+        new: true
+      });
+      if (!user) {
+        throw new Error('User not found');
       }
-      throw new Error('Unauthorized');
+      return user;
     } catch (error) {
       throw new Error(error.message);
     }
   },
 
-  deleteUser: async (userId, currentUser) => {
+  deleteUser: async (userId) => {
     try {
-      if (
-        currentUser.role === 'admin' ||
-        currentUser._id.toString() === userId
-      ) {
-        const user = await User.findByIdAndDelete(userId);
-        if (!user) {
-          throw new Error('User not found');
-        }
-        return { message: 'User deleted' };
+      const user = await User.findByIdAndDelete(userId);
+      if (!user) {
+        throw new Error('User not found');
       }
-      throw new Error('Unauthorized');
+      return { message: 'User deleted' };
     } catch (error) {
       throw new Error(error.message);
     }

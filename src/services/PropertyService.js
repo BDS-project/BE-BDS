@@ -9,14 +9,24 @@ const PropertyService = {
         query.name = { $regex: filter.name, $options: 'i' };
       }
 
-      if (filter?.min_price !== undefined || filter?.max_price !== undefined) {
+      if (filter?.min_price || filter?.max_price) {
         query.price = {};
-        if (filter.min_price !== undefined) {
+        if (filter.min_price) {
           query.price.$gte = filter.min_price;
         }
-        if (filter.max_price !== undefined) {
+        if (filter.max_price) {
           query.price.$lte = filter.max_price;
         }
+        if (Object.keys(query.price).length === 0) {
+          delete query.price;
+        }
+      }
+      if (filter?.start_date || filter?.end_date) {
+        query.created_at = {};
+
+        if (filter.start_date)
+          query.created_at.$gte = new Date(filter.start_date);
+        if (filter.end_date) query.created_at.$lte = new Date(filter.end_date);
       }
 
       if (filter?.type) {
@@ -37,8 +47,13 @@ const PropertyService = {
           };
         }
       }
+      console.log('query:', query);
 
-      const properties = await Property.find(query);
+      const page = filter?.page || 1;
+      const limit = filter?.limit || 10;
+      const skip = (page - 1) * limit;
+
+      const properties = await Property.find(query).skip(skip).limit(limit);
       return properties;
     } catch (error) {
       throw new Error(error.message);

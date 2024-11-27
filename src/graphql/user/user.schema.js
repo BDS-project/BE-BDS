@@ -32,6 +32,7 @@ type Appointment {
     confirmed  
     cancelled
   }
+
 type AuthResponse {
   accessToken: String!
   refreshToken: String!
@@ -55,8 +56,18 @@ input UpdateUserInput {
   status: String
 }
 
+input UserFilterInput {
+  role: String
+  status: String
+  email: String
+  first_name: String
+  last_name: String
+  page: Int 
+  limit: Int
+}
+
 type Query {
-  users: [User!]!
+  users(filter: UserFilterInput): [User!]!
   user(id: ID!): User
   profile: User
 }
