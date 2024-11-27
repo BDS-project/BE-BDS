@@ -23,15 +23,13 @@ type Appointment {
     appointment_date: String!
     property: String!
     status: AppointmentStatus!
-    customer: User!
-    advisor: User
   }
 
-   enum AppointmentStatus {
+enum AppointmentStatus {
     pending
     confirmed  
     cancelled
-  }
+}
 
 type AuthResponse {
   accessToken: String!

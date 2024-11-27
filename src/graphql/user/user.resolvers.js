@@ -1,4 +1,5 @@
 import UserService from '../../services/UserService.js';
+import authenticate from '../../utils/middleware/auth.js';
 
 const resolvers = {
   Query: {
@@ -10,7 +11,9 @@ const resolvers = {
     user: async (_, { id }, user) => {
       return await UserService.getUserById(id);
     },
-    profile: async (_, __, user) => {
+    profile: async (_, __, context) => {
+      const { req } = context;
+      const user = await authenticate(req);
       if (!user) throw new Error('Unauthorized');
       return await UserService.getUserById(user.id);
     }

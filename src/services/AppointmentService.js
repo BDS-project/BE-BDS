@@ -50,8 +50,7 @@ const AppointmentService = {
 
   getAppointmentById: async (appointmentId) => {
     try {
-      const appointment =
-        await Appointment.findById(appointmentId).populate('property');
+      const appointment = await Appointment.findById(appointmentId);
       if (!appointment) {
         throw new Error('Appointment not found');
       }
@@ -71,7 +70,7 @@ const AppointmentService = {
       if (!appointment) {
         throw new Error('Appointment not found');
       }
-      return appointment;
+      return appointment.populate('customer advisor');
     } catch (error) {
       throw new Error(error.message);
     }

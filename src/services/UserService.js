@@ -133,7 +133,8 @@ const UserService = {
       if (userProfile.role === 'advisor') {
         await userProfile.populate({
           path: 'advisor_appointments',
-          select: 'status appointment_date property',
+          select:
+            'status appointment_date property phone email full_name status',
           populate: {
             path: 'customer',
             select: 'first_name last_name email'
@@ -142,13 +143,15 @@ const UserService = {
       } else {
         await userProfile.populate({
           path: 'customer_appointments',
-          select: 'status appointment_date property',
+          select:
+            'status appointment_date property phone email full_name status',
           populate: {
             path: 'advisor',
             select: 'first_name last_name email'
           }
         });
       }
+
       return userProfile;
     } catch (error) {
       throw new Error(error.message);

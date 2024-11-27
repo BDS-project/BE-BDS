@@ -2,13 +2,19 @@ import Property from '../models/Property.js';
 
 const PropertyService = {
   getAllProperties: async (filter) => {
+    console.log('filter:', filter);
     try {
       const query = {};
 
       if (filter?.name) {
         query.name = { $regex: filter.name, $options: 'i' };
       }
-
+      if (filter?.bedrooms) {
+        query.bedrooms = filter.bedrooms;
+      }
+      if (filter?.bathrooms) {
+        query.bathrooms = filter.bathrooms;
+      }
       if (filter?.min_price || filter?.max_price) {
         query.price = {};
         if (filter.min_price) {
@@ -35,10 +41,16 @@ const PropertyService = {
 
       if (filter?.location) {
         if (filter.location.city) {
-          query['location.city'] = filter.location.city;
+          query['location.city'] = {
+            $regex: `^${filter.location.city}$`,
+            $options: 'i'
+          };
         }
         if (filter.location.district) {
-          query['location.district'] = filter.location.district;
+          query['location.district'] = {
+            $regex: `^${filter.location.district}$`,
+            $options: 'i'
+          };
         }
         if (filter.location.address) {
           query['location.address'] = {
@@ -47,7 +59,6 @@ const PropertyService = {
           };
         }
       }
-      console.log('query:', query);
 
       const page = filter?.page || 1;
       const limit = filter?.limit || 10;
