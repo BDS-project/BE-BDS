@@ -43,12 +43,10 @@ const UserService = {
   },
 
   registerUser: async ({ input }) => {
-    console.log('input:', input);
     try {
       const { first_name, last_name, email, password } = input;
 
       const existingUser = await User.findOne({ email });
-      console.log('existingUser:', existingUser);
       if (existingUser) {
         throw new Error('Email already exists');
       }

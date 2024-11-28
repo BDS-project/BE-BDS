@@ -27,7 +27,6 @@ const resolvers = {
 
   Mutation: {
     createAppointment: async (_, { input }, user) => {
-      console.log('input:', input);
       input.customer = user.id ? user.id : '674475497504fb0dada4e2be';
       return await AppointmentService.createAppointment(input);
     },

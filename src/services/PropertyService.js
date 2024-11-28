@@ -2,7 +2,6 @@ import Property from '../models/Property.js';
 
 const PropertyService = {
   getAllProperties: async (filter) => {
-    console.log('filter:', filter);
     try {
       const query = {};
 
@@ -64,7 +63,11 @@ const PropertyService = {
       const limit = filter?.limit || 10;
       const skip = (page - 1) * limit;
 
-      const properties = await Property.find(query).skip(skip).limit(limit);
+      const properties = await Property.find(query)
+        .skip(skip)
+        .limit(limit)
+        .populate('project')
+        .exec();
       return properties;
     } catch (error) {
       throw new Error(error.message);
