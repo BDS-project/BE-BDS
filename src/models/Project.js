@@ -37,13 +37,11 @@ const ProjectSchema = new mongoose.Schema(
       type: String,
       enum: ['planning', 'under_construction', 'pre-launch', 'completed']
     },
-    property_types: [
-      {
-        type: String,
-        enum: ['apartment', 'villa', 'land', 'office'],
-        default: 'apartment'
-      }
-    ],
+    property_types: {
+      type: String,
+      enum: ['apartment', 'villa', 'land', 'office'],
+      default: 'apartment'
+    },
     is_featured: { type: Boolean, default: false }
   },
   {

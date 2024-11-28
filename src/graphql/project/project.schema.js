@@ -20,7 +20,7 @@ type Project {
   launch_year: Int
   status: String
   properties:[Property!]
-  property_types: String
+  property_types: TypePropertyBusiness!
   is_featured: Boolean
   created_at: String
   updated_at: String
@@ -50,6 +50,13 @@ type Property {
 enum TypeProperty {
     rent
     sale
+}
+
+enum TypePropertyBusiness {
+    apartment
+    office
+    land
+    villa
 }
 
 input ProjectFilterInput {
@@ -91,7 +98,7 @@ input CreateProjectInput {
   developer: String
   launch_year: Int
   status: String
-  property_types: String
+  property_types: TypePropertyBusiness
   is_featured: Boolean
 }
 
@@ -111,7 +118,7 @@ input UpdateProjectInput {
   developer: String
   launch_year: Int
   status: String
-  property_types: String
+  property_types: TypePropertyBusiness
   is_featured: Boolean
 }
 

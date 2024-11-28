@@ -107,10 +107,17 @@ type Project {
   developer: String
   launch_year: Int
   status: String
-  property_types: String
+  property_types: TypePropertyBusiness
   is_featured: Boolean
   created_at: String
   updated_at: String
+}
+  
+enum TypePropertyBusiness {
+    apartment
+    office
+    land
+    villa
 }
 
 type PropertyImage {
