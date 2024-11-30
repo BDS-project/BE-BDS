@@ -41,4 +41,9 @@ const blogSchema = new mongoose.Schema(
 
 blogSchema.index({ title: 'text', content: 'text' });
 
+blogSchema.pre(/^find/, function (next) {
+  this.populate('author', 'id first_name last_name email role avatar status created_at updated_at');
+  next();
+});
+
 export default mongoose.model('Blog', blogSchema);

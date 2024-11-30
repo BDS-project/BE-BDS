@@ -34,7 +34,8 @@ type User {
   created_at: String
   updated_at: String
 }
-  input CreateBlogInput {
+
+input CreateBlogInput {
     title: String!
     content: String!
     slug: String!
