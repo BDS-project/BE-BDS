@@ -7,6 +7,7 @@ import {
 const resolvers = {
   Query: {
     blogs: async (_parent, { filter }) => {
+      console.log("filterblogs:", filter)
       return await BlogService.getAllBlogs(filter);
     },
     blog: async (_, { id }) => {
@@ -15,12 +16,14 @@ const resolvers = {
   },
   Mutation: {
     createBlog: async (_, { input }, user) => {
+      console.log("input:", input)
       // if (user.role !== 'admin') {
       //   throw new Error('Only admin can create properties');
       // }
       return await BlogService.createBlog(input);
     },
     uploadImage: async (_, { image }) => {
+      console.log("image:", image)
       if (image) {
         const { createReadStream, filename } = await image;
         const fileUrl = await uploadFileToGCS({

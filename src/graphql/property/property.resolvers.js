@@ -10,6 +10,7 @@ const resolvers = {
 
   Query: {
     properties: async (_parent, { filter }) => {
+      console.log("filterproperties:", filter)
       return await PropertyService.getAllProperties(filter);
     },
     property: async (_, { id }) => {

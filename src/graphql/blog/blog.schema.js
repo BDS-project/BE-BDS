@@ -90,7 +90,7 @@ input CreateBlogInput {
   }
 
   type Mutation {
-    createBlog(input: CreateBlogInput!, thumbnail: Upload): Blog!
+    createBlog(input: CreateBlogInput!): Blog!
     uploadImage(image: Upload!): UploadResponse!
     updateBlog(id: ID!, input: UpdateBlogInput!, thumbnail: Upload): Blog!
     deleteBlog(id: ID!): Boolean!

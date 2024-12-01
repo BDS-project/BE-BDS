@@ -68,6 +68,7 @@ const PropertyService = {
         .limit(limit)
         .populate('project')
         .exec();
+
       return properties;
     } catch (error) {
       throw new Error(error.message);
