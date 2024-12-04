@@ -9,6 +9,8 @@ import blogResolvers from './blog/blog.resolvers.js';
 import projectResolvers from './project/project.resolvers.js';
 import projectSchema from './project/project.schema.js';
 import propertyImageSchema from './propertyImage/propertyImage.schema.js';
+import chatSchema from './chatBot/chat.schema.js';
+import chatResolvers from './chatBot/chat.resolver.js';
 
 export const typeDefs = [
   userSchema,
@@ -16,12 +18,14 @@ export const typeDefs = [
   blogSchema,
   projectSchema,
   propertySchema,
-  propertyImageSchema
+  propertyImageSchema,
+  chatSchema
 ];
 export const resolvers = [
   userResolvers,
   appointmentResolvers,
   blogResolvers,
   projectResolvers,
-  propertyResolvers
+  propertyResolvers,
+  chatResolvers
 ];
