@@ -95,7 +95,5 @@ input CreateBlogInput {
     updateBlog(id: ID!, input: UpdateBlogInput!, thumbnail: Upload): Blog!
     deleteBlog(id: ID!): Boolean!
     incrementBlogViews(id: ID!): Blog!
-    publishBlog(id: ID!): Blog!
-    unpublishBlog(id: ID!): Blog!
   }
 `;

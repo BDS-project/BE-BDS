@@ -5,12 +5,12 @@ import {
   uploadFileToGCS,
   deleteFileFromGCS
 } from '../../utils/middleware/uploadFile.js';
+import authenticate from '../../utils/middleware/auth.js';
 const resolvers = {
   Upload: GraphQLUpload,
 
   Query: {
-    properties: async (_parent, { filter }) => {
-      console.log("filterproperties:", filter)
+    properties: async (_parent, { filter }, context) => {
       return await PropertyService.getAllProperties(filter);
     },
     property: async (_, { id }) => {
@@ -19,10 +19,13 @@ const resolvers = {
   },
 
   Mutation: {
-    createProperty: async (_parent, { input, images }, user) => {
-      // if (user.role !== 'admin') {
-      //   throw new Error('Only admin can create properties');
-      // }
+    createProperty: async (_parent, { input, images }, context) => {
+      const { req } = context;
+      const user = await authenticate(req);
+      if (!user) throw new Error('Unauthorized');
+      if (user.role !== 'admin') {
+        throw new Error('Only admin can create properties');
+      }
 
       let property;
       let propertyImages = [];
@@ -88,10 +91,13 @@ const resolvers = {
       }
     },
 
-    updateProperty: async (_parent, { id, input, images }, user) => {
-      // if (user.role !== 'admin') {
-      //   throw new Error('Only admin can update properties');
-      // }
+    updateProperty: async (_parent, { id, input, images }, context) => {
+      const { req } = context;
+      const user = await authenticate(req);
+      if (!user) throw new Error('Unauthorized');
+      if (user.role !== 'admin') {
+        throw new Error('Only admin can create properties');
+      }
 
       let oldProperty;
       let cloudImageUrls = [];
@@ -178,10 +184,13 @@ const resolvers = {
       }
     },
 
-    deleteProperty: async (_parent, { id }, user) => {
-      // if (user.role !== 'admin') {
-      //   throw new Error('Only admin can delete properties');
-      // }
+    deleteProperty: async (_parent, { id }, context) => {
+      const { req } = context;
+      const user = await authenticate(req);
+      if (!user) throw new Error('Unauthorized');
+      if (user.role !== 'admin') {
+        throw new Error('Only admin can create properties');
+      }
 
       try {
         const property = await PropertyService.getPropertyById(id);

@@ -53,7 +53,10 @@ input UpdateUserInput {
   role: String
   status: String
 }
-
+input UpdateUserPasswordInput {
+  current_password: String
+  new_password: String
+}
 input UserFilterInput {
   role: String
   status: String
@@ -76,6 +79,7 @@ type Mutation {
   refreshToken: AuthResponse
   createUser(input: CreateUserInput!, avatar: Upload): User
   updateUser(id: ID!, input: UpdateUserInput!, avatar: Upload): User
+  changePassword(input: UpdateUserPasswordInput!): Boolean
   deleteUser(id: ID!): String
 }
 `;

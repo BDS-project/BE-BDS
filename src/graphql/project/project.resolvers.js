@@ -6,6 +6,7 @@ import {
 } from '../../utils/middleware/uploadFile.js';
 import PropertyImageService from '../../services/PropertyImageService.js';
 import PropertyService from '../../services/PropertyService.js';
+import authenticate from '../../utils/middleware/auth.js';
 
 const resolvers = {
   Upload: GraphQLUpload,
@@ -20,10 +21,13 @@ const resolvers = {
   },
 
   Mutation: {
-    createProject: async (_parent, { input, image }, user) => {
-      // if (user.role !== 'admin')
-      //   throw new Error('Only admin can create projects');
-
+    createProject: async (_parent, { input, image }, context) => {
+      const { req } = context;
+      const user = await authenticate(req);
+      if (!user) throw new Error('Unauthorized');
+      if (user.role !== 'admin') {
+        throw new Error('Only admin can create properties');
+      }
       try {
         let fileUrl = null;
 
@@ -51,9 +55,13 @@ const resolvers = {
       }
     },
 
-    updateProject: async (_parent, { id, input, image }, user) => {
-      // if (user.role !== 'admin')
-      //   throw new Error('Only admin can update projects');
+    updateProject: async (_parent, { id, input, image }, context) => {
+      const { req } = context;
+      const user = await authenticate(req);
+      if (!user) throw new Error('Unauthorized');
+      if (user.role !== 'admin') {
+        throw new Error('Only admin can create properties');
+      }
 
       try {
         const existingProject = await ProjectService.getProjectById(id);
@@ -82,10 +90,13 @@ const resolvers = {
       }
     },
 
-    deleteProject: async (_parent, { id }, user) => {
-      // if (user.role !== 'admin')
-      //   throw new Error('Only admin can delete projects');
-
+    deleteProject: async (_parent, { id }, context) => {
+      const { req } = context;
+      const user = await authenticate(req);
+      if (!user) throw new Error('Unauthorized');
+      if (user.role !== 'admin') {
+        throw new Error('Only admin can create properties');
+      }
       try {
         const project = await ProjectService.getProjectById(id);
         if (project.image) {

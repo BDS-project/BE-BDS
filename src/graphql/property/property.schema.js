@@ -72,6 +72,8 @@ input PropertyFilterInput {
   price: Float
   min_price: Float
   max_price: Float
+  min_size: Float
+  max_size: Float
   bedrooms: Int
   bathrooms: Int
   type: TypeProperty

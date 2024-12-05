@@ -5,7 +5,6 @@ import dotenv from 'dotenv';
 import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 import connectDB from './config/db.js';
 import { typeDefs, resolvers } from './graphql/index.js';
-import authenticate from './utils/middleware/auth.js';
 import handleDialogflowWebhook from './services/webhook/index.js';
 
 dotenv.config();

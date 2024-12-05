@@ -26,6 +26,15 @@ const PropertyService = {
           delete query.price;
         }
       }
+      if (filter?.min_size || filter?.max_size) {
+        query.size = {};
+        if (filter.min_size) {
+          query.size.$gte = filter.min_size;
+        }
+        if (filter.max_size) {
+          query.size.$lte = filter.max_size;
+        }
+      }
       if (filter?.start_date || filter?.end_date) {
         query.created_at = {};
 

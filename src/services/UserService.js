@@ -169,7 +169,33 @@ const UserService = {
       throw new Error(error.message);
     }
   },
+  changePassword: async (userId, passwordData) => {
+    try {
+      const { current_password, new_password } = passwordData;
 
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      const isCurrentPasswordValid = await bcrypt.compare(
+        current_password,
+        user.password
+      );
+      if (!isCurrentPasswordValid) {
+        throw new Error('Current password is incorrect');
+      }
+
+      const hashedNewPassword = await bcrypt.hash(new_password, 10);
+
+      user.password = hashedNewPassword;
+      await user.save();
+
+      return true;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
   deleteUser: async (userId) => {
     try {
       const user = await User.findByIdAndDelete(userId);
