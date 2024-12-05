@@ -18,6 +18,7 @@
     "@google-cloud/dialogflow": "^6.11.0",
     "@google-cloud/storage": "^7.14.0",
     "apollo-server-express": "^3.13.0",
+    "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -26,6 +27,7 @@
     "graphql-upload": "^17.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.1",
+    "node-fetch": "^3.3.2",
     "uuid": "^11.0.3"
   },
   "devDependencies": {
