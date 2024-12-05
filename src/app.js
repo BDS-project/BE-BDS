@@ -6,6 +6,7 @@ import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 import connectDB from './config/db.js';
 import { typeDefs, resolvers } from './graphql/index.js';
 import authenticate from './utils/middleware/auth.js';
+import handleDialogflowWebhook from './services/webhook/index.js';
 
 dotenv.config();
 
@@ -31,7 +32,7 @@ const startServer = async () => {
 
     await server.start();
     server.applyMiddleware({ app });
-
+    app.post('/webhook', handleDialogflowWebhook);
     app.listen(PORT, () => {
       console.log(`Server http://localhost:${PORT}`);
       console.log(`GraphQL http://localhost:${PORT}${server.graphqlPath}`);
