@@ -20,6 +20,11 @@ const PropertySchema = new mongoose.Schema(
     project: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Project',
+      required: true
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
       required: true,
       index: true
     },
@@ -32,10 +37,12 @@ const PropertySchema = new mongoose.Schema(
     },
     is_featured: { type: Boolean, default: false }
   },
-  { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }
+  {
+    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+  }
 );
-
-PropertySchema.index({ project: 1, status: 1 });
 
 PropertySchema.virtual('property_images', {
   ref: 'PropertyImage',
@@ -45,7 +52,7 @@ PropertySchema.virtual('property_images', {
   options: { sort: { created_at: -1 } }
 });
 
-PropertySchema.pre(['find', 'findOne', 'findOneAndUpdate'], function () {
+PropertySchema.pre(/^find/, function () {
   this.populate('property_images');
 });
 

@@ -14,7 +14,8 @@ type Property {
   block: String
   price: Float!
   location: Location!
-  project: Project!
+  project: Project
+  user: User
   internal_facilities: [String]
   furnitures: [String]
   status: String
@@ -92,7 +93,7 @@ input LocationFilterInput {
 }
 
 type Project {
-  id: ID!
+  id: ID
   name: String!
   location_advantages: [String!]
   project_information: [String!]
@@ -114,7 +115,19 @@ type Project {
   created_at: String
   updated_at: String
 }
-  
+
+type User {
+  id: ID
+  avatar: String
+  first_name: String
+  last_name: String
+  email: String
+  role: String
+  status: String
+  created_at: String
+  updated_at: String
+}
+
 enum TypePropertyBusiness {
     apartment
     office
@@ -156,6 +169,7 @@ input BlockInput {
 type Query {
   properties(filter: PropertyFilterInput): [Property!]!
   property(id: ID!): Property
+  myProperties(filter: PropertyFilterInput): [Property!]!
 }
 
 type Mutation {

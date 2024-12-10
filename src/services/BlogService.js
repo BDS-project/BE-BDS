@@ -48,9 +48,7 @@ const BlogService = {
 
   getBlogById: async (blogId) => {
     try {
-      const blog = await Blog.findById(blogId)
-        .populate('author', 'firstName lastName')
-        .populate('category', 'name');
+      const blog = await Blog.findById(blogId);
       if (!blog) {
         throw new Error('Blog post not found');
       }

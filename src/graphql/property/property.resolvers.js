@@ -15,6 +15,12 @@ const resolvers = {
     },
     property: async (_, { id }) => {
       return await PropertyService.getPropertyById(id);
+    },
+    myProperties: async (_, { filter }, context) => {
+      const { req } = context;
+      const user = await authenticate(req);
+      if (!user) throw new Error('Unauthorized');
+      return await PropertyService.getAllMyProperties(filter, user);
     }
   },
 
@@ -23,10 +29,7 @@ const resolvers = {
       const { req } = context;
       const user = await authenticate(req);
       if (!user) throw new Error('Unauthorized');
-      if (user.role !== 'admin') {
-        throw new Error('Only admin can create properties');
-      }
-
+      input.user = user.id;
       let property;
       let propertyImages = [];
       let cloudImageUrls = [];
@@ -95,8 +98,8 @@ const resolvers = {
       const { req } = context;
       const user = await authenticate(req);
       if (!user) throw new Error('Unauthorized');
-      if (user.role !== 'admin') {
-        throw new Error('Only admin can create properties');
+      if (user.role !== 'admin' && user.role !== 'customer') {
+        throw new Error('Failed');
       }
 
       let oldProperty;
@@ -105,6 +108,10 @@ const resolvers = {
 
       try {
         oldProperty = await PropertyService.getPropertyById(id);
+
+        if (user.role !== 'admin' && oldProperty.user.toString() !== user.id) {
+          throw new Error('You can only update your own properties');
+        }
 
         if (images?.length) {
           const oldImages = oldProperty?.property_images || [];
@@ -188,12 +195,15 @@ const resolvers = {
       const { req } = context;
       const user = await authenticate(req);
       if (!user) throw new Error('Unauthorized');
-      if (user.role !== 'admin') {
-        throw new Error('Only admin can create properties');
+      if (user.role !== 'admin' && user.role !== 'customer') {
+        throw new Error('Failed');
       }
 
       try {
         const property = await PropertyService.getPropertyById(id);
+        if (user.role !== 'admin' && property.user.toString() !== user.id) {
+          throw new Error('You can only update your own properties');
+        }
         const propertyImages = property.property_images || [];
 
         await Promise.all(
