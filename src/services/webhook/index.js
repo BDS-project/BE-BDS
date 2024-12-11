@@ -9,39 +9,61 @@ const GRAPHQL_API_URL = process.env.API_ENDPOINT;
 const handleDialogflowWebhook = async (req, res) => {
   try {
     const userBudget = req.body.queryResult.parameters.budget;
+    const userSize = req.body.queryResult.parameters.size;
     const userLocation = req.body.queryResult.parameters.location;
-    const variables = {};
+    const filter = {};
     if (userBudget) {
-      variables.max_price = parseFloat(userBudget);
+      filter.max_price = parseFloat(userBudget);
+    }
+    if (userSize) {
+      filter.max_size = parseFloat(userSize);
     }
     if (userLocation) {
-      variables.location = { city: userLocation };
+      filter.location = { city: userLocation };
     }
+
+    // Query GraphQL
     const query = `
-        query GetPropertiesUnderBudget($maxPrice: Float, $location: LocationFilterInput) {
-          properties(filter: { max_price: $maxPrice, location: $location }) {
-            id
-            title
-            price
-            description
-            size
-            location {
-              city
-              district
-              address
-            }
+      query GetProperties($filter: PropertyFilterInput) {
+        properties(filter: $filter) {
+          id
+          title
+          price
+          description
+          size
+          location {
+            city
+            district
+            address
           }
         }
-      `;
-    // Gửi yêu cầu GraphQL tới API
+      }
+    `;
+
+    // Gửi yêu cầu tới API GraphQL
     const response = await axios.post(
       GRAPHQL_API_URL,
-      { query, variables },
+      { query, variables: { filter } },
       { headers: { 'Content-Type': 'application/json' } }
     );
 
     const { properties } = response.data.data;
 
+    if (!properties || properties.length === 0) {
+      return res.json({
+        fulfillmentMessages: [
+          {
+            text: {
+              text: [
+                'Xin lỗi, không tìm thấy bất động sản phù hợp với yêu cầu của bạn.'
+              ]
+            }
+          }
+        ]
+      });
+    }
+
+    // Chuẩn bị danh sách kết quả
     const propertiesList = properties.map((property) => ({
       title: property.title,
       price: property.price,
@@ -58,7 +80,7 @@ const handleDialogflowWebhook = async (req, res) => {
               'Đây là một số dự án anh/chị có thể quan tâm:',
               ...propertiesList.map(
                 (property) =>
-                  `${property.title} -Khu vực: ${property.location} - Giá: ${property.price} VND - Diện tích: ${property.size} m²`
+                  `${property.title} - Khu vực: ${property.location} - Giá: ${property.price} VND - Diện tích: ${property.size} m²`
               )
             ]
           }
@@ -78,4 +100,5 @@ const handleDialogflowWebhook = async (req, res) => {
     });
   }
 };
+
 export default handleDialogflowWebhook;
