@@ -20,6 +20,9 @@ const resolvers = {
       const { req } = context;
       const user = await authenticate(req);
       if (!user) throw new Error('Unauthorized');
+      if (user.role === 'admin') {
+        return await PropertyService.getAllProperties(filter);
+      }
       return await PropertyService.getAllMyProperties(filter, user);
     }
   },

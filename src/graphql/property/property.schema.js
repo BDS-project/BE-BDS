@@ -16,7 +16,7 @@ type Property {
   location: Location!
   project: Project
   user: User
-  internal_facilities: [String]
+  internal_facilities: String
   furnitures: [String]
   status: String
   property_images: [PropertyImage!]!
@@ -38,7 +38,7 @@ input CreatePropertyInput {
   bedrooms: Int!
   bathrooms: Int!
   size: Float!
-  internal_facilities: [String]
+  internal_facilities: String
   furnitures: [String]
   orientation: String
   block: String
@@ -56,7 +56,7 @@ input UpdatePropertyInput {
   description: String
   bedrooms: Int
   bathrooms: Int
-  internal_facilities: [String]
+  internal_facilities: String
   furnitures: [String]
   size: Float
   orientation: String

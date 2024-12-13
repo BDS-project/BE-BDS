@@ -28,11 +28,11 @@ const PropertySchema = new mongoose.Schema(
       required: true,
       index: true
     },
-    internal_facilities: [{ type: String }],
+    internal_facilities: { type: String },
     furnitures: [{ type: String }],
     status: {
       type: String,
-      enum: ['available', 'sold', 'pending'],
+      enum: ['available', 'sold', 'pending', 'rented'],
       default: 'available'
     },
     is_featured: { type: Boolean, default: false }
