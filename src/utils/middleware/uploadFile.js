@@ -34,7 +34,7 @@ const deleteFileFromGCS = async ({ folder, filename }) => {
     return `File ${filename} has been deleted successfully.`;
   } catch (error) {
     console.error('Error deleting file:', error.message);
-    throw new Error(`Failed to delete file ${filename}: ${error.message}`);
+    // throw new Error(`Failed to delete file ${filename}: ${error.message}`);
   }
 };
 export { uploadFileToGCS, deleteFileFromGCS };
